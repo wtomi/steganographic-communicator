@@ -4,7 +4,10 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>Buffer.h</itemPath>
+      <itemPath>ReadBuffer.h</itemPath>
       <itemPath>User.h</itemPath>
+      <itemPath>WriteBuffer.h</itemPath>
       <itemPath>client_loop.h</itemPath>
       <itemPath>data_conversion.h</itemPath>
       <itemPath>socket_headers.h</itemPath>
@@ -16,7 +19,10 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>Buffer.cpp</itemPath>
+      <itemPath>ReadBuffer.cpp</itemPath>
       <itemPath>User.cpp</itemPath>
+      <itemPath>WriteBuffer.cpp</itemPath>
       <itemPath>client_loop.cpp</itemPath>
       <itemPath>data_conversion.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
@@ -42,10 +48,28 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
+        <ccTool>
+          <commandLine>-lpthread -Wall</commandLine>
+        </ccTool>
+        <linkerTool>
+          <commandLine>-lpthread -Wall</commandLine>
+        </linkerTool>
       </compileType>
+      <item path="Buffer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Buffer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ReadBuffer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ReadBuffer.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="User.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="User.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="WriteBuffer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="WriteBuffer.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="client_loop.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -80,9 +104,21 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="Buffer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Buffer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ReadBuffer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ReadBuffer.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="User.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="User.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="WriteBuffer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="WriteBuffer.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="client_loop.cpp" ex="false" tool="1" flavor2="0">
       </item>

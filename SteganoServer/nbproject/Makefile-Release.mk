@@ -35,7 +35,10 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/Buffer.o \
+	${OBJECTDIR}/ReadBuffer.o \
 	${OBJECTDIR}/User.o \
+	${OBJECTDIR}/WriteBuffer.o \
 	${OBJECTDIR}/client_loop.o \
 	${OBJECTDIR}/data_conversion.o \
 	${OBJECTDIR}/main.o
@@ -65,10 +68,25 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/steganoserver: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/steganoserver ${OBJECTFILES} ${LDLIBSOPTIONS}
 
+${OBJECTDIR}/Buffer.o: Buffer.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Buffer.o Buffer.cpp
+
+${OBJECTDIR}/ReadBuffer.o: ReadBuffer.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ReadBuffer.o ReadBuffer.cpp
+
 ${OBJECTDIR}/User.o: User.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/User.o User.cpp
+
+${OBJECTDIR}/WriteBuffer.o: WriteBuffer.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/WriteBuffer.o WriteBuffer.cpp
 
 ${OBJECTDIR}/client_loop.o: client_loop.cpp 
 	${MKDIR} -p ${OBJECTDIR}

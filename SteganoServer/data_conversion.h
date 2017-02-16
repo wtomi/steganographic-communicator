@@ -16,6 +16,7 @@
 
 int array_to_int(char* bytes);
 char *int_to_bytes(int n, char *bytes);
+char *alloc_int_to_bytes(int n);
 
 #endif /* DATA_CONVERSION_H */
 

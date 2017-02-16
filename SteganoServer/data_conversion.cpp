@@ -4,11 +4,10 @@
  * and open the template in the editor.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-
+#include <exception>
+#include <new>
+#include <iostream>
 #include "data_conversion.h"
-
 
 int array_to_int(char* bytes) {
     int n = 0;
@@ -20,18 +19,20 @@ int array_to_int(char* bytes) {
 }
 
 char *int_to_bytes(int n, char *bytes) {
-
     bytes[0] = (n >> 24) & 0xFF;
     bytes[1] = (n >> 16) & 0xFF;
     bytes[2] = (n >> 8) & 0xFF;
-    bytes[3] = n & 0xFF;
+    bytes[3] = n & 0xFF;    
+    return bytes;
 }
 
 char *alloc_int_to_bytes(int n) {
-    char *bytes = malloc(sizeof(n));
-    if(bytes == NULL) {
-        perror("ERROR in alloc_int_to_bytes()");
+    try {
+        char *bytes = new char[sizeof (n)];
+        int_to_bytes(n, bytes);
+        return bytes;
+    } catch (std::bad_alloc& ba) {
+        std::cerr << "bad_alloc caught: " << ba.what() << '\n';
+        return NULL;
     }
-    int_to_bytes(n, bytes);
-    return bytes;
 }

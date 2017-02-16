@@ -1,2 +1,4 @@
 /SteganoClient/.idea/*
 /SteganoClient/out/*
+/SteganoServer/build/
+/SteganoServer/dist/
