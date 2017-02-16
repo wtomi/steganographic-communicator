@@ -29,14 +29,18 @@
 #include <pthread.h>
 #include <exception>
 
-class SocketClosedException: public std::exception {
-    const char* what() const throw() {
+class SocketClosedException : public std::exception {
+public:
+
+    const char* what() const throw () {
         return "Socked closed";
     }
 };
 
-class SocketErrorException: public std::exception {
-    const char* what() const throw() {
+class SocketErrorException : public std::exception {
+public:
+
+    const char* what() const throw () {
         return "Socked eroor";
     }
 };

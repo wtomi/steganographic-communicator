@@ -23,6 +23,7 @@ WriteBuffer::WriteBuffer(const WriteBuffer& orig) :Buffer(orig){
 }
 
 WriteBuffer::~WriteBuffer() {
+    delete[] buffer;
 }
 
 void WriteBuffer::putInt(int n) {

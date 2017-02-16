@@ -6,6 +6,7 @@
                    projectFiles="true">
       <itemPath>Buffer.h</itemPath>
       <itemPath>ReadBuffer.h</itemPath>
+      <itemPath>Socket.h</itemPath>
       <itemPath>User.h</itemPath>
       <itemPath>WriteBuffer.h</itemPath>
       <itemPath>client_loop.h</itemPath>
@@ -21,6 +22,7 @@
                    projectFiles="true">
       <itemPath>Buffer.cpp</itemPath>
       <itemPath>ReadBuffer.cpp</itemPath>
+      <itemPath>Socket.cpp</itemPath>
       <itemPath>User.cpp</itemPath>
       <itemPath>WriteBuffer.cpp</itemPath>
       <itemPath>client_loop.cpp</itemPath>
@@ -62,6 +64,10 @@
       <item path="ReadBuffer.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="ReadBuffer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Socket.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Socket.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="User.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -111,6 +117,10 @@
       <item path="ReadBuffer.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="ReadBuffer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Socket.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Socket.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="User.cpp" ex="false" tool="1" flavor2="0">
       </item>

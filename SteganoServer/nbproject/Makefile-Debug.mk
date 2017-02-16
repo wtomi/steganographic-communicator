@@ -37,6 +37,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/Buffer.o \
 	${OBJECTDIR}/ReadBuffer.o \
+	${OBJECTDIR}/Socket.o \
 	${OBJECTDIR}/User.o \
 	${OBJECTDIR}/WriteBuffer.o \
 	${OBJECTDIR}/client_loop.o \
@@ -77,6 +78,11 @@ ${OBJECTDIR}/ReadBuffer.o: ReadBuffer.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ReadBuffer.o ReadBuffer.cpp
+
+${OBJECTDIR}/Socket.o: Socket.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Socket.o Socket.cpp
 
 ${OBJECTDIR}/User.o: User.cpp 
 	${MKDIR} -p ${OBJECTDIR}

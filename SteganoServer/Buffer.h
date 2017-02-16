@@ -30,21 +30,15 @@ public:
     void reset();
     void reset(int len);
     unsigned int remaining();
-protected:
-    class BufferOverflowException: public std::exception {        
-        const char* what() const throw() {
+
+    class BufferOverflowException : public std::exception {
+    public:
+
+        const char* what() const throw () {
             return "Buffor overflow exception";
-        }       
-    };
-    class ToBigMessageException: public std::exception {
-        const char* what() const throw() {
-            return "Too big message exception. "
-                    "Message's length specfied "
-                    "in message in the beggining "
-                    "of the message is too long"
-                    "for the buffer.";
         }
     };
+protected:
     char *buffer;
     int position;
     int limit;

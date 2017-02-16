@@ -28,8 +28,6 @@ public:
     int getInt();  
     char *getChunkPtr(unsigned int size);
     char *getCstringPtr();
-    int recvMessage(int sck);
-    int recvMessage(int sck, int size);
 private:
 };
 

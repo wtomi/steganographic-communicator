@@ -13,7 +13,7 @@
 
 #include "User.h"
 
-User::User(int socket) {
+User::User(Socket *socket) {
     this->name = NULL;
     this->socket = socket;
     this->user_added = false;
@@ -24,9 +24,12 @@ User::User(const User& orig) {
 }
 
 User::~User() {
+    if(name != NULL) {
+        delete name;
+    }
 }
 
-int User::GetSocket() const {
+Socket *User::GetSocket() const {
     return socket;
 }
 

@@ -18,12 +18,14 @@
 #include <pthread.h>
 using namespace std;
 
+#include "Socket.h"
+
 class User {
 public:
-    User(int socket);
+    User(Socket *sck);
     User(const User& orig);
     virtual ~User();
-    int GetSocket() const;
+    Socket *GetSocket() const;
     string *GetName() const;
     void SetMutex_socket(pthread_mutex_t mutex_socket);
     void SetName(string *name);
@@ -32,7 +34,7 @@ public:
     pthread_mutex_t *GetRefMutex_socket();
 private:
     string *name;
-    int socket;
+    Socket *socket;
     pthread_mutex_t mutex_socket;
     bool user_added;
 };

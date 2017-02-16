@@ -29,6 +29,7 @@ Buffer::Buffer(const Buffer& orig) {
 }
 
 Buffer::~Buffer() {
+    delete[] buffer;
 }
 
 void Buffer::reset() {
