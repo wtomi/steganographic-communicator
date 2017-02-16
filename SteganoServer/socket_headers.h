@@ -27,6 +27,19 @@
 #include <arpa/inet.h>
 #include <time.h>
 #include <pthread.h>
+#include <exception>
+
+class SocketClosedException: public std::exception {
+    const char* what() const throw() {
+        return "Socked closed";
+    }
+};
+
+class SocketErrorException: public std::exception {
+    const char* what() const throw() {
+        return "Socked eroor";
+    }
+};
 
 #endif /* SOCKET_HEADERS_H */
 

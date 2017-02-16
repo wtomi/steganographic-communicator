@@ -18,6 +18,7 @@
 #include "ReadBuffer.h"
 #include "data_conversion.h"
 #include "Buffer.h"
+#include "socket_headers.h"
 
 ReadBuffer::ReadBuffer(int capacity): Buffer(capacity) {
     
@@ -64,6 +65,32 @@ char *ReadBuffer::getCstringPtr() {
         throw BufferOverflowException();
     position += len;   
     return cStrngPointer;
+}
+
+int ReadBuffer::recvMessage(int sck) {    
+    //assumption that in comunication protocol between client and server
+    //there is fixed max size of signle message
+    //this size is given in bytes 1-4 (byte 0 contains message type)
+    char bytes[sizeof(int)];
+    int len = recv(sck, bytes, sizeof(int), MSG_WAITALL);
+    if (len == 0)
+        throw SocketClosedException();
+    else if (len < 0)
+        throw SocketErrorException();
+    int size = array_to_int(bytes);
+    len = recv(sck, buffer, size, MSG_WAITALL);
+    if (len == 0)
+        throw SocketClosedException();
+    else if (len < 0)
+        throw SocketErrorException();
+    else if(len != size)
+        perror("Impossible! Too short message received");
+    return size;
+}
+
+int ReadBuffer::recvMessage(int sck, int size) {
+    
+    
 }
 
 

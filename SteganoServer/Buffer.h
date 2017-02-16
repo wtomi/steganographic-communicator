@@ -36,6 +36,15 @@ protected:
             return "Buffor overflow exception";
         }       
     };
+    class ToBigMessageException: public std::exception {
+        const char* what() const throw() {
+            return "Too big message exception. "
+                    "Message's length specfied "
+                    "in message in the beggining "
+                    "of the message is too long"
+                    "for the buffer.";
+        }
+    };
     char *buffer;
     int position;
     int limit;
