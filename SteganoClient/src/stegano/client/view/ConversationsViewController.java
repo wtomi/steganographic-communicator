@@ -29,8 +29,7 @@ public class ConversationsViewController {
      * after the fxml file has been loaded.
      */
     @FXML
-    private void initialize()
-    {
+    private void initialize() {
         nameColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
     }
 

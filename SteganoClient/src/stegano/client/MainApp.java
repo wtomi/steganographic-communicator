@@ -2,6 +2,7 @@ package stegano.client;
 
 import javafx.collections.FXCollections;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import stegano.client.model.Contact;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
@@ -33,7 +34,8 @@ public class MainApp extends Application {
 
         initRootLayout();
 
-        showConversationsView();
+        showLoginView();
+        //showConversationsView();
     }
 
     /**
@@ -51,6 +53,19 @@ public class MainApp extends Application {
             primaryStage.setScene(scene);
             primaryStage.show();
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showLoginView() {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/LoginView.fxml"));
+            VBox loginView = (VBox) loader.load();
+
+            rootLayout.setCenter(loginView);
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
