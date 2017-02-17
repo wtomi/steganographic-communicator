@@ -14,7 +14,25 @@
 #ifndef CLIENT_LOOP_H
 #define CLIENT_LOOP_H
 
+#include <exception>
+
 void *client_loop(void *arg);
+
+class UnauthenticatedUserException : public std::exception {
+public:
+
+    const char* what() const throw () {
+        return "Request from unauthenticated user";
+    }
+};
+
+class TooBigMessageException: public std::exception {
+    public:
+
+    const char* what() const throw () {
+        return "Size of the message is greater than buffor size";
+    }
+};
 
 #endif /* CLIENT_LOOP_H */
 

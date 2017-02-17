@@ -37,10 +37,6 @@ string *User::GetName() const {
     return name;
 }
 
-void User::SetMutex_socket(pthread_mutex_t mutex_socket) {
-    this->mutex_socket = mutex_socket;
-}
-
 void User::SetName(string *name) {
     this->name = name;
 }

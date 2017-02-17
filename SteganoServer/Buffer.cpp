@@ -13,19 +13,20 @@
 #include <exception>
 #include <new>
 #include <iostream>
+#include <string.h>
 #include "Buffer.h"
 
-Buffer::Buffer(int capacity) {
-    try {
-        buffer = new char[capacity];
+Buffer::Buffer(unsigned int capacity): buffer(new char[capacity]){
         this->capacity = capacity;
         this->reset();
-    } catch (std::bad_alloc& ba) {
-        std::cerr << "bad_alloc caught: " << ba.what() << '\n';
-    }
 }
 
-Buffer::Buffer(const Buffer& orig) {
+Buffer::Buffer(const Buffer& orig): buffer(new char[orig.capacity]){
+    memcpy(this->buffer, orig.buffer, orig.capacity);
+    this->capacity = orig.capacity;
+    this->position = orig.position;
+    this->limit = orig.limit;
+    this->previousPosition = orig.previousPosition;
 }
 
 Buffer::~Buffer() {
@@ -34,13 +35,15 @@ Buffer::~Buffer() {
 
 void Buffer::reset() {
     this->position = 0;
+    this->previousPosition = 0;
     this->limit = this->capacity;
 }
 
-void Buffer::reset(int len) {
+void Buffer::reset(unsigned int len) {
     if(len > this->capacity)
         throw BufferOverflowException();
     this->position = 0;
+    this->previousPosition = 0;
     this->limit = len;
 }
 
@@ -48,27 +51,31 @@ unsigned int Buffer::remaining() {
     return this->limit - this->position;
 }
 
-int Buffer::GetCapacity() const {
+unsigned int Buffer::lastOperationLen() {
+    return this->position - this->previousPosition;
+}
+
+unsigned int Buffer::GetCapacity() const {
     return capacity;
 }
 
-void Buffer::SetLimit(int limit) {
+void Buffer::SetLimit(unsigned int limit) {
     this->limit = limit;
 }
 
-int Buffer::GetLimit() const {
+unsigned int Buffer::GetLimit() const {
     return limit;
 }
 
-void Buffer::SetPosition(int position) {
+void Buffer::SetPosition(unsigned int position) {
     this->position = position;
 }
 
-int Buffer::GetPosition() const {
+unsigned int Buffer::GetPosition() const {
     return position;
 }
 
-char* Buffer::GetBuffor() const {
+char* Buffer::GetBuffer() const {
     return buffer;
 }
 

@@ -27,7 +27,6 @@ public:
     virtual ~User();
     Socket *GetSocket() const;
     string *GetName() const;
-    void SetMutex_socket(pthread_mutex_t mutex_socket);
     void SetName(string *name);
     void SetUser_added(bool user_added);
     bool IsUser_added() const;

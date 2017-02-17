@@ -18,17 +18,18 @@
 
 class Buffer {
 public:
-    Buffer(int capacity);
+    Buffer(unsigned int capacity);
     Buffer(const Buffer& orig);
     virtual ~Buffer();
-    int GetCapacity() const;
-    void SetLimit(int limit);
-    int GetLimit() const;
-    void SetPosition(int position);
-    int GetPosition() const;
-    char* GetBuffor() const;
+    unsigned int GetCapacity() const;
+    void SetLimit(unsigned int limit);
+    unsigned int GetLimit() const;
+    void SetPosition(unsigned int position);
+    unsigned int GetPosition() const;
+    char* GetBuffer() const;
+    unsigned int lastOperationLen();
     void reset();
-    void reset(int len);
+    void reset(unsigned int len);
     unsigned int remaining();
 
     class BufferOverflowException : public std::exception {
@@ -39,10 +40,11 @@ public:
         }
     };
 protected:
-    char *buffer;
-    int position;
-    int limit;
-    int capacity;
+    char* const buffer;
+    unsigned int position;
+    unsigned int limit;
+    unsigned int capacity;
+    unsigned int previousPosition;
 private:
 
 };

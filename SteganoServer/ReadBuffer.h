@@ -20,7 +20,7 @@
 
 class ReadBuffer: public Buffer {
 public:
-    ReadBuffer(int capacity);
+    ReadBuffer(unsigned int capacity);
     ReadBuffer(const ReadBuffer& orig);
     virtual ~ReadBuffer();
     

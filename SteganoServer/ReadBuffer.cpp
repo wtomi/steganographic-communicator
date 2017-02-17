@@ -20,7 +20,7 @@
 #include "Buffer.h"
 #include "socket_headers.h"
 
-ReadBuffer::ReadBuffer(int capacity): Buffer(capacity) {
+ReadBuffer::ReadBuffer(unsigned int capacity): Buffer(capacity) {
     
 }
 
@@ -29,13 +29,13 @@ ReadBuffer::ReadBuffer(const ReadBuffer& orig): Buffer(orig) {
 }
 
 ReadBuffer::~ReadBuffer(){
-    delete[] buffer;
 }
 
 char ReadBuffer::getByte() {
     if(this->remaining() < sizeof(char))
         throw BufferOverflowException();
-    char byte = this->buffer[this->position-1];
+    char byte = this->buffer[this->position];
+    this->previousPosition = this->position;
     this->position++;
     return  byte;
 }
@@ -43,7 +43,8 @@ char ReadBuffer::getByte() {
 int ReadBuffer::getInt() {
     if(this->remaining() < sizeof(int))
         throw BufferOverflowException();
-    int n = array_to_int(buffer + position - 1);    
+    int n = array_to_int(buffer + position); 
+    this->previousPosition = this->position;
     this->position += sizeof(int);
     return n;
 }
@@ -52,6 +53,7 @@ char* ReadBuffer::getChunkPtr(unsigned int size){
     if(size > this->remaining())
         throw BufferOverflowException();
     char *chunkStart = this->buffer + this->position;
+    this->previousPosition = this->position;
     this->position += size;
     return chunkStart;
 }
@@ -61,10 +63,11 @@ char *ReadBuffer::getCstringPtr() {
     if(rem <= 0)
         throw BufferOverflowException();
     char *cStrngPointer = this->buffer + this->position;
-    unsigned int len = strlen(cStrngPointer);
+    unsigned int len = strlen(cStrngPointer) + 1;
     if(len > rem)
         throw BufferOverflowException();
-    position += len;   
+    this->previousPosition = this->position;
+    this->position += len;
     return cStrngPointer;
 }
 

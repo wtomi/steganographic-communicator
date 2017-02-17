@@ -18,13 +18,16 @@
 
 class WriteBuffer: public Buffer{
 public:
-    WriteBuffer(int capacity);
+    WriteBuffer(unsigned int capacity);
     WriteBuffer(const WriteBuffer& orig);
     virtual ~WriteBuffer();
     
     void putInt(int n);
+    unsigned int shiftPosition(unsigned int n);
+    void overrideInt(int n, unsigned int position);
+    void overrideByte(char byte, unsigned int position);
     void putByte(char byte);
-    int putCstring(char *cString);
+    unsigned int putCstring(const char *cString);
     void putChunk(char *chunk, unsigned int chunkSize);
 private:
 };
