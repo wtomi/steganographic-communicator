@@ -20,9 +20,13 @@ import java.io.IOException;
 public class MainApp extends Application {
 
     private Stage primaryStage;
-    private BorderPane rootLayout;
+    private static BorderPane rootLayout;
 
     private ObservableList<Contact> contacts = FXCollections.observableArrayList();
+
+    public static BorderPane getRootLayout() {
+        return rootLayout;
+    }
 
     @Override
     public void start(Stage primaryStage) {
@@ -62,10 +66,8 @@ public class MainApp extends Application {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource("view/LoginView.fxml"));
             VBox loginView = (VBox) loader.load();
-
             rootLayout.setCenter(loginView);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -83,10 +85,6 @@ public class MainApp extends Application {
             // Set person overview into the center of root layout.
             rootLayout.setCenter(personOverview);
 
-            // Give the controller access to the main app.
-            ConversationsViewController controller = loader.getController();
-            controller.setMainApp(this);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -94,6 +92,7 @@ public class MainApp extends Application {
 
     /**
      * Returns the main stage.
+     *
      * @return
      */
     public Stage getPrimaryStage() {

@@ -1,11 +1,13 @@
 package stegano.client.view;
 
-import javafx.scene.control.TableColumn;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.*;
 import stegano.client.model.*;
 import stegano.client.MainApp;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.TableView;
+
+import java.io.IOException;
 
 /**
  * Created by tommy on 27.01.2017.
@@ -16,9 +18,8 @@ public class ConversationsViewController {
     private TableView<Contact> contactTable;
     @FXML
     private TableColumn<Contact, String> nameColumn;
-
-    //Reference to the mani application
-    private MainApp mainApp;
+    @FXML
+    private TabPane tabPane;
 
     public ConversationsViewController() {
 
@@ -30,18 +31,35 @@ public class ConversationsViewController {
      */
     @FXML
     private void initialize() {
+        contactTable.setItems(World.getInstance().getContacts());
         nameColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
+        nameColumn.setCellFactory((TableColumn<Contact, String> tableColumn) -> {
+            TableCell<Contact, String> cell = new TableCell<Contact, String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty ? null : item);
+                }
+            };
+            cell.setOnMouseClicked(e -> {
+                if (!cell.isEmpty()) {
+                    String userId = cell.getItem();
+                    System.out.println(userId);
+                }
+            });
+            return cell;
+        });
     }
 
-    /**
-     * Is called by the main application to give a reference back to itself.
-     *
-     * @param mainApp
-     */
-    public void setMainApp(MainApp mainApp) {
-        this.mainApp = mainApp;
-
-        // Add observable list data to the table
-        contactTable.setItems(mainApp.getContacts());
+    private void addNewTab(Contact contact) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/ConversationTabView.fxml"));
+            Tab tab = (Tab) loader.load();
+            tab.setText(contact.getName());
+            tabPane.getTabs().add(tab);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

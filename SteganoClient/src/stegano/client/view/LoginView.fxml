@@ -43,7 +43,7 @@
                   <Label text="password" GridPane.rowIndex="2" />
                   <Label text="name" GridPane.rowIndex="3" />
                   <Button fx:id="startButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="221.0" text="Start" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <TextField fx:id="serverPassword" prefWidth="353.0" text="1234" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <TextField fx:id="serverPassword" prefWidth="353.0" text="password" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <Label text="port" GridPane.rowIndex="1" />
                </children>
             </GridPane>
