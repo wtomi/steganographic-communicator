@@ -52,6 +52,11 @@ public class SocketController {
 
     private final int SERVER_AUTH_REQUEST = 1;
     private final int SERVER_CONTACTS_REQUEST = 2;
+    private final int SERVER_PASS_MSG = 3;
+    //subtypes
+    private final int SERVER_PASS_MSG_INFO = 1;
+    private final int SERVER_PASS_MSG_PART = 2;
+    private final int SERVER_PASS_MSG_ALL = 3;
 
 
     AtomicBoolean running = new AtomicBoolean(false);
@@ -73,12 +78,43 @@ public class SocketController {
 
     public Task<Boolean> getSendMsgTask(String recipientName, String message) {
         return new Task<Boolean>() {
-
             @Override
             protected Boolean call() throws Exception {
+
+
+
                 return null;
             }
         };
+    }
+
+    private void sendImg(DataOutputStream out, String recipientName, int width, int height, byte img[]) throws IOException {
+        //send first message informing about recipient's name and image's dimensions
+        out.writeByte(SERVER_PASS_MSG); //message type
+        out.writeByte(SERVER_PASS_MSG_INFO); //message subtype
+        out.writeInt(recipientName.length() + 1); //send recipient's name's length + 1 for null - "\0"
+        out.write((recipientName + "\0").getBytes(StandardCharsets.US_ASCII)); //send recipient's name
+        out.writeInt(width); //image width
+        out.writeInt(height); //image height
+        //send image data
+        int remaining = img.length;
+        int off = 0;
+        int len;
+        while(remaining > 0) {
+            out.writeByte(SERVER_PASS_MSG);
+            if(remaining > SERVER_BUFFSIZE - 2) { //2 bytes are needed for type and subtype, rest of the message actual image data
+                out.writeByte(SERVER_PASS_MSG_PART); //subtype indicating that the message contains only a part of the image
+                len = SERVER_BUFFSIZE - 2;
+            }
+            else {
+                out.writeByte(SERVER_PASS_MSG_ALL); //last message to be sent
+                len = remaining;
+            }
+            out.write(img, off, len);
+            off += len;
+            remaining -= len;
+        }
+        System.out.println("Message sent");
     }
 
     private class SocketTask extends Task<Boolean> {
