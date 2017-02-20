@@ -14,7 +14,7 @@
    <children>
       <SplitPane dividerPositions="0.29797979797979796" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
-            <TableView fx:id="contactTable" prefHeight="325.0" prefWidth="192.0">
+            <TableView fx:id="contactTable" maxWidth="300.0" minWidth="100.0" prefWidth="155.0">
               <columns>
                 <TableColumn fx:id="nameColumn" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="-1.0" text="Contacts" />
               </columns>
@@ -24,7 +24,7 @@
             </TableView>
             <TabPane fx:id="tabPane">
                <tabs>
-                  <Tab>
+                  <Tab text="MyTab">
                      <content>
                         <SplitPane dividerPositions="0.8204334365325078" orientation="VERTICAL">
                            <items>
