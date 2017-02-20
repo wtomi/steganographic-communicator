@@ -2,7 +2,6 @@ package stegano.client.sck;
 
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
@@ -40,7 +39,7 @@ public class SocketController {
     private final int USER_AUTH_SUCCESS = 1;
     private final int USER_AUTH_FAILURE = 2;
     //end subtypes
-    private final int USER_RECV_CONNTACTS = 2;
+    private final int USER_RECV_CONTACTS = 2;
     //subtypes
     private final int USER_RECV_CONTACTS_PART = 1;
     private final int USER_RECV_CONTACTS_ALL = 2;
@@ -67,45 +66,22 @@ public class SocketController {
     private SocketController() {
     }
 
-    public boolean connect(String host, String hostPassword, int port, String clientName) {
-
-        if (running.compareAndSet(false, true)) {
-            Task task = new SocketTask(host, hostPassword, port, clientName);
-            Thread t = new Thread(task);
-            t.setDaemon(true);
-            t.start();
-            return true;
-        } else
-            return false;
+    public Task<Boolean> getConnectTask(String host, String hostPassword, int port, String clientName) {
+        Task<Boolean> task = new SocketTask(host, hostPassword, port, clientName);
+        return task;
     }
 
-    private List<String> recvUsersNames(DataInputStream in) throws IOException {
-        List<String> recvNames = null;
-        try {
-            int msg_subtype;
-            recvNames = new ArrayList<>();
-            do {
-                msg_subtype = in.readByte();
-                int len = in.readInt();
-                if (len > 0) {
-                    in.readFully(buf.array(), 0, len);
-                    String string = new String(buf.array(), 0, len);
-                    String names[] = string.split("\0");
-                    for (String s :
-                            names) {
-                        recvNames.add(s);
-                    }
-                }
-            } while (msg_subtype != USER_RECV_CONTACTS_ALL);
-        } catch (IOException e) {
-            throw e;
-        } finally {
-            waitingForContacts.set(false);
-            return recvNames;
-        }
+    public Task<Boolean> getSendMsgTask(String recipientName, String message) {
+        return new Task<Boolean>() {
+
+            @Override
+            protected Boolean call() throws Exception {
+                return null;
+            }
+        };
     }
 
-    private class SocketTask extends Task<Void> {
+    private class SocketTask extends Task<Boolean> {
 
         private final String host;
         private final int port;
@@ -120,119 +96,60 @@ public class SocketController {
         }
 
         @Override
-        protected Void call() throws Exception {
-
-            ScheduledService<Void> ssvc = null;
+        protected Boolean call() throws Exception {
             try {
                 socket = new Socket(host, port);
                 inStream = new DataInputStream(socket.getInputStream());
                 outStream = new DataOutputStream(socket.getOutputStream());
-                if (authenticate(inStream, outStream)) { //if authentication succeeded
-                    ssvc = new ContactsRequestService();
-                    ssvc.setPeriod(Duration.seconds(3));
-                    //ssvc.setRestartOnFailure(true);
-                    ssvc.start();
-                    boolean out = false;
-                    while (!out) {
-                        byte msg_type = inStream.readByte();
-                        switch (msg_type) {
-                            case USER_RECV_CONNTACTS:
-                                update_contacts(inStream);
-                                break;
-                            case USER_RECV_MSG:
-                                break;
-                            default:
-                                throw new WrongMsgTypeException("Wrong message's type");
-                        }
+
+                //authenticate
+                boolean auth;
+                String msg;
+                synchronized (socketLock) {
+                    send_authentication_request(outStream);
+                    auth = recv_authentication_reply(inStream);
+                    msg = recv_authentication_msg(inStream);
+                }
+                updateMessage(msg);
+                if (auth) {
+                    if (running.compareAndSet(false, true)) {
+                        //run thread which waits for messages from server
+                        //if other thread of such a type is not running
+                        Task<Void> mainTask = new SocketMainTask();
+                        Thread t = new Thread(mainTask);
+                        t.setDaemon(true);
+                        t.start();
+                        System.out.println("thread main started");
+                        return Boolean.TRUE;
                     }
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+
             } catch (TooLongMessageException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
                 e.printStackTrace();
             } catch (WrongMsgTypeException e) {
                 e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                if (socket != null) {
-                    socket.close();
-                    socket = null;
-                }
-                if (inStream != null) {
-                    inStream.close();
-                    inStream = null;
-                }
-                if (outStream != null) {
-                    outStream.close();
-                    outStream = null;
-                }
-                running.set(false);
-                ssvc.cancel();
-            }
-            return null;
-        }
-
-        private void update_contacts(DataInputStream in) throws IOException {
-            List<String> recvContacts;
-            synchronized (socketLock) {
-                recvContacts = recvUsersNames(in);
-            }
-            if (!recvContacts.isEmpty()) {
-                removeRedundantContacts(recvContacts);
-                addNewContacts(recvContacts);
-            } else {
-                Platform.runLater(() -> contacts.get().clear());
-            }
-        }
-
-        private void addNewContacts(List<String> recvContacts) {
-            for (String s :
-                    recvContacts) {
-                boolean contain = false;
-                for (Contact c :
-                        contacts.get()) {
-                    if (s.equals(c.getName())) {
-                        contain = true;
-                        break;
+                if (running.compareAndSet(false, false)) {
+                    if (socket != null) {
+                        socket.close();
+                        socket = null;
+                    }
+                    if (inStream != null) {
+                        inStream.close();
+                        inStream = null;
+                    }
+                    if (outStream != null) {
+                        outStream.close();
+                        outStream = null;
                     }
                 }
-                if (!contain) {
-                    System.out.println("Added: " + s);
-                    Platform.runLater(() -> contacts.get().add(new Contact(s)));
-                }
+                System.out.println("The end of authentication");
             }
-        }
-
-        private void removeRedundantContacts(List<String> recvContacts) {
-            recvContacts.sort(String::compareTo);
-            //remove contacts which aren't in received contacts
-            for (Contact c :
-                    contacts.get()) {
-                boolean rm = true;
-                for (String s :
-                        recvContacts) {
-                    int cmp = c.getName().compareTo(s);
-                    if (cmp == 0) {
-                        rm = false;
-                        break;
-                    } else if (cmp < 0)
-                        break;
-                }
-                if (rm) {
-                    System.out.println("Deleted: " + c.getName());
-                    Platform.runLater(() -> contacts.get().remove(c));
-                }
-            }
-        }
-
-        private boolean authenticate(DataInputStream in, DataOutputStream out) throws IOException, TooLongMessageException {
-            synchronized (socketLock) {
-                send_authentication_request(out);
-                boolean auth = recv_authentication_reply(in);
-                recv_authentication_msg(in);
-                return auth;
-            }
+            return Boolean.FALSE;
         }
 
         private void send_authentication_request(DataOutputStream out) throws IOException, TooLongMessageException {
@@ -246,12 +163,12 @@ public class SocketController {
             out.flush();
         }
 
-        private void recv_authentication_msg(DataInputStream in) throws IOException {
+        private String recv_authentication_msg(DataInputStream in) throws IOException {
             int len = in.readInt();
             System.out.println("Read int: " + Integer.toString(len));
             in.readFully(buf.array(), 0, len);
             String string = new String(buf.array(), 0, len);
-            System.out.println(string);
+            return string;
         }
 
         private boolean recv_authentication_reply(DataInputStream in) throws IOException {
@@ -268,6 +185,138 @@ public class SocketController {
                 }
             } else {
                 throw new WrongMsgTypeException("Wrong message's type authenticating");
+            }
+        }
+
+        private class SocketMainTask extends Task<Void> {
+
+            @Override
+            protected Void call() throws Exception {
+                System.out.println("Start of main loop");
+                ScheduledService<Void> ssvc = null;
+                try {
+                    //run service for sending request for contacts' list to server
+                    ssvc = new ContactsRequestService();
+                    ssvc.setPeriod(Duration.seconds(3));
+                    //ssvc.setRestartOnFailure(true);
+                    ssvc.start();
+                    boolean out = false;
+                    while (!out) {
+                        byte msg_type = inStream.readByte();
+                        switch (msg_type) {
+                            case USER_RECV_CONTACTS:
+                                update_contacts(inStream);
+                                break;
+                            case USER_RECV_MSG:
+                                break;
+                            default:
+                                throw new WrongMsgTypeException("Wrong message's type");
+                        }
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (WrongMsgTypeException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    if (socket != null) {
+                        socket.close();
+                        socket = null;
+                    }
+                    if (inStream != null) {
+                        inStream.close();
+                        inStream = null;
+                    }
+                    if (outStream != null) {
+                        outStream.close();
+                        outStream = null;
+                    }
+                    running.set(false);
+                    ssvc.cancel();
+                    System.out.println("The end of main loop");
+                }
+                return null;
+            }
+
+            private void update_contacts(DataInputStream in) throws IOException {
+                List<String> recvContacts;
+                synchronized (socketLock) {
+                    recvContacts = recvUsersNames(in);
+                }
+                if (!recvContacts.isEmpty()) {
+                    removeRedundantContacts(recvContacts);
+                    addNewContacts(recvContacts);
+                } else {
+                    Platform.runLater(() -> contacts.get().clear());
+                }
+            }
+
+            private List<String> recvUsersNames(DataInputStream in) throws IOException {
+                List<String> recvNames = null;
+                try {
+                    int msg_subtype;
+                    recvNames = new ArrayList<>();
+                    do {
+                        msg_subtype = in.readByte();
+                        int len = in.readInt();
+                        if (len > 0) {
+                            in.readFully(buf.array(), 0, len);
+                            String string = new String(buf.array(), 0, len);
+                            String names[] = string.split("\0");
+                            for (String s :
+                                    names) {
+                                recvNames.add(s);
+                            }
+                        }
+                    } while (msg_subtype != USER_RECV_CONTACTS_ALL);
+                } catch (IOException e) {
+                    throw e;
+                } finally {
+                    waitingForContacts.set(false);
+                    return recvNames;
+                }
+            }
+
+            private void addNewContacts(List<String> recvContacts) {
+                for (String s :
+                        recvContacts) {
+                    boolean contain = false;
+                    for (Contact c :
+                            contacts.get()) {
+                        if (s.equals(c.getName())) {
+                            contain = true;
+                            break;
+                        }
+                    }
+                    if (!contain) {
+                        System.out.println("Added: " + s);
+                        Platform.runLater(() -> contacts.get().add(new Contact(s)));
+                    }
+                }
+            }
+
+            private void removeRedundantContacts(List<String> recvContacts) {
+                recvContacts.sort(String::compareTo);
+                //remove contacts which aren't in received contacts
+                for (Contact c :
+                        contacts.get()) {
+                    boolean rm = true;
+                    for (String s :
+                            recvContacts) {
+                        int cmp = c.getName().compareTo(s);
+                        if (cmp == 0) {
+                            rm = false;
+                            break;
+                        } else if (cmp < 0)
+                            break;
+                    }
+                    if (rm) {
+                        System.out.println("Deleted: " + c.getName());
+                        Platform.runLater(() -> contacts.get().remove(c));
+                    }
+                }
             }
         }
     }
@@ -288,8 +337,10 @@ public class SocketController {
         }
 
         void send_contacts_request(DataOutputStream out) throws IOException {
-            out.writeByte(SERVER_CONTACTS_REQUEST);
-            out.flush();
+            synchronized (socketLock) {
+                out.writeByte(SERVER_CONTACTS_REQUEST);
+                out.flush();
+            }
         }
     }
 

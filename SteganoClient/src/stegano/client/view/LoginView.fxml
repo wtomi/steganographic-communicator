@@ -14,11 +14,16 @@
    <children>
       <FlowPane alignment="CENTER" prefHeight="99.0" prefWidth="609.0">
          <children>
-            <Label accessibleRole="IMAGE_VIEW" alignment="TOP_CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="211.0" text="SteganoCommunicator" textAlignment="CENTER">
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Label>
+            <VBox alignment="CENTER">
+               <children>
+                  <Label accessibleRole="IMAGE_VIEW" alignment="TOP_CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="211.0" text="SteganoCommunicator" textAlignment="CENTER">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="message" alignment="CENTER" text="message" textAlignment="CENTER" textFill="#ee3939" visible="false" />
+               </children>
+            </VBox>
          </children>
       </FlowPane>
       <FlowPane alignment="CENTER" columnHalignment="CENTER" VBox.vgrow="ALWAYS">
