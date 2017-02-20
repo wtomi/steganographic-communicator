@@ -44,7 +44,7 @@
                   <TextField fx:id="serverName" text="127.0.0.1" GridPane.columnIndex="1" />
                   <TextField fx:id="serverPort" text="1234" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <TextField fx:id="userName" text="Name" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <Label text="server" />
+                  <Label text="server IP" />
                   <Label text="password" GridPane.rowIndex="2" />
                   <Label text="name" GridPane.rowIndex="3" />
                   <Button fx:id="startButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="221.0" text="Start" GridPane.columnIndex="1" GridPane.rowIndex="4" />
