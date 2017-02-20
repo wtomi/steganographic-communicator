@@ -57,6 +57,7 @@ public class SteganoEncryptor {
                 letter = 0;
             }
             letter |= (imageData[i] & 0x01) << num_of_bit;
+            num_of_bit++;
         }
 
         byte[] byteTextData = new byte[textData.size()];
