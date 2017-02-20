@@ -7,6 +7,9 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Created by tommy on 20.02.2017.
@@ -17,13 +20,11 @@ public class ImageSaver {
         saveImage(image, path, "png");
     }
 
-    public static void saveImageJpg(Image image, String path) {
-        saveImage(image, path, "jpg");
-    }
-
     private static void saveImage(Image image, String path, String format) {
-
-        File outputFile = new File(path);
+        System.out.println(path + "\\" + LocalTime.now().toString() + ".png");
+        DateTimeFormatter timeForamtter = DateTimeFormatter.ofPattern("yyyy.MM.dd.HH.mm.ss.SSS");
+        String time = LocalDateTime.now().format(timeForamtter);
+        File outputFile = new File(path + "\\" + time + "." + format);
         BufferedImage bImage = SwingFXUtils.fromFXImage(image, null);
         try {
             ImageIO.write(bImage, format, outputFile);
