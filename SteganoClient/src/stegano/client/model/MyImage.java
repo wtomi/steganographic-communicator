@@ -16,16 +16,19 @@ public class MyImage {
     private int width;
     private int height;
     private byte[] imageData;
+    private static WritablePixelFormat<ByteBuffer> pixelFormat = PixelFormat.getByteBgraInstance();
 
     public MyImage(Image image) {
         width = (int)image.getWidth();
         height = (int)image.getHeight();
         imageData = new byte[width * height * 4];
-        WritablePixelFormat<ByteBuffer> pixelFormat = PixelFormat.getByteBgraInstance();
         PixelReader pixelReader = image.getPixelReader();
         pixelReader.getPixels(0, 0, width, height, pixelFormat, imageData, 0, width * 4);
     }
 
+    public static WritablePixelFormat<ByteBuffer> getPixelFormat() {
+        return pixelFormat;
+    }
 
     public int getWidth() {
         return width;
