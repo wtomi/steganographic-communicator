@@ -5,12 +5,17 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ObservableList;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
+import javafx.scene.image.Image;
 import javafx.util.Duration;
+import stegano.client.img.ImageLoader;
 import stegano.client.model.Contact;
+import stegano.client.model.MyImage;
 import stegano.client.model.World;
+import stegano.client.stegano.SteganoEncryptor;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
@@ -32,6 +37,9 @@ public class SocketController {
 
     private final int SERVER_BUFFSIZE = 8192;
     private ByteBuffer buf = ByteBuffer.allocate(SERVER_BUFFSIZE);
+
+    private final String INPUT_IMG_DIR = "../images/inImages";
+    private final String OUTPUT_IMG_DIR = "../images/outImages";
 
     //messages' types
     private final int USER_AUTH = 1;
@@ -86,6 +94,17 @@ public class SocketController {
                 return null;
             }
         };
+    }
+
+
+    private boolean sendMessage(DataOutputStream out, String recipientName, String message) throws IOException {
+        Image image = ImageLoader.loadRandomImageFromDir(new File(INPUT_IMG_DIR).getCanonicalFile().toString());
+        MyImage myImage = new MyImage(image);
+        SteganoEncryptor.encryptData(myImage.getImageData(), message);
+        synchronized (socketLock) {
+            sendImg(out, recipientName, myImage.getWidth(), myImage.getHeight(), myImage.getImageData());
+        }
+        return false;
     }
 
     private void sendImg(DataOutputStream out, String recipientName, int width, int height, byte img[]) throws IOException {
