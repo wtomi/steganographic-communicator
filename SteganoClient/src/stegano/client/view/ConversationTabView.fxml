@@ -7,16 +7,16 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<Tab xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+<Tab fx:id="tab" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stegano.client.view.ConversationTabViewController">
    <content>
       <AnchorPane>
          <children>
             <SplitPane dividerPositions="0.6377708978328174" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <items>
-                  <ListView prefHeight="200.0" prefWidth="200.0" />
+                  <ListView fx:id="conversationListView" prefHeight="200.0" prefWidth="200.0" />
                   <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER">
                      <content>
-                        <TextArea prefWidth="471.0" wrapText="true" />
+                        <TextArea fx:id="msgTextArea" prefWidth="471.0" wrapText="true" />
                      </content>
                   </ScrollPane>
                </items>
