@@ -26,11 +26,27 @@ public:
     }
 };
 
-class TooBigMessageException: public std::exception {
-    public:
+class TooBigMessageException : public std::exception {
+public:
 
     const char* what() const throw () {
         return "Size of the message is greater than buffor size";
+    }
+};
+
+class WrongMessageTypeException : public std::exception {
+public:
+
+    const char* what() const throw () {
+        return "Wrong message type";
+    }
+};
+
+class NoSuchUserException : public std::exception {
+public:
+
+    const char* what() const throw () {
+        return "User doesn't exist";
     }
 };
 
