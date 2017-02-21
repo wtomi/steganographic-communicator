@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
 
 <AnchorPane prefHeight="327.0" prefWidth="628.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stegano.client.view.ConversationsViewController">
@@ -23,7 +25,12 @@
                <tabs>
                   <Tab text="MyTab">
                      <content>
-                        <SplitPane orientation="VERTICAL" />
+                        <SplitPane dividerPositions="0.5" orientation="VERTICAL">
+                           <items>
+                              <ListView prefHeight="200.0" prefWidth="200.0" />
+                              <TextArea prefHeight="200.0" prefWidth="200.0" />
+                           </items>
+                        </SplitPane>
                      </content>
                   </Tab>
                </tabs>

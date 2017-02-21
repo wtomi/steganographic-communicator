@@ -49,7 +49,9 @@ public class ConversationTabViewController {
                 Thread t = new Thread(sendMsgTask);
                 t.setDaemon(true);
                 t.start();
+                msgTextArea.positionCaret(0);
                 msgTextArea.clear();
+                event.consume();
             }
         });
 

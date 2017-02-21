@@ -104,9 +104,10 @@ public class SocketController {
         boolean recipientConnected = false;
         for (Contact c :
                 contacts.get()) {
-            if (c.getName().equals(recipinetName))
+            if (c.getName().equals(recipinetName)) {
                 recipientConnected = true;
-            break;
+                break;
+            }
         }
         return recipientConnected;
     }
@@ -428,7 +429,7 @@ public class SocketController {
                     throw new WrongMsgTypeException("Wrong message type in recvMessage");
                 int len = in.readInt();
                 in.readFully(buf.array(), 0, len);
-                String senderName = new String(buf.array(), 0, len-1, StandardCharsets.US_ASCII);
+                String senderName = new String(buf.array(), 0, len - 1, StandardCharsets.US_ASCII);
                 int imgWidth = in.readInt();
                 int imgHeight = in.readInt();
                 int imgLen = imgWidth * imgHeight * 4;
