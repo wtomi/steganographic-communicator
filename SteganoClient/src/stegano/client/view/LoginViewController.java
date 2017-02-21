@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import stegano.client.MainApp;
+import stegano.client.model.World;
 import stegano.client.sck.SocketController;
 
 import java.io.IOException;
@@ -49,11 +50,13 @@ public class LoginViewController {
             public void handle(ActionEvent event) {
 
                 startButton.setDisable(true); //disable button until authentication finishes
+                String userNameText = userName.getText();
                 Task<Boolean> connectTask = SocketController.getInstance().getConnectTask(serverName.getText(), serverPassword.getText(),
                         Integer.valueOf(serverPort.getText()), userName.getText());
                 connectTask.setOnSucceeded((WorkerStateEvent t) -> {
                     if (connectTask.getValue() == Boolean.TRUE) {
                         loadAndShoewConversationView();
+                        World.getInstance().setMyUserName(userNameText);
                     }
                     else {
                         message.setText(connectTask.getMessage());

@@ -7,10 +7,10 @@ import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
+import stegano.client.img.ImageConverter;
 import stegano.client.img.ImageLoader;
-import stegano.client.model.Contact;
-import stegano.client.model.MyImage;
-import stegano.client.model.World;
+import stegano.client.img.ImageSaver;
+import stegano.client.model.*;
 import stegano.client.stegano.SteganoEncryptor;
 
 import java.io.DataInputStream;
@@ -54,8 +54,9 @@ public class SocketController {
     //end subtypes
     private final int USER_RECV_MSG = 3;
     //subtypes
-    private final int USER_RECV_MSG_PART = 1;
-    private final int USER_RECV_MSG_ALL = 2;
+    private final int USER_RECV_MSG_INFO = 1;
+    private final int USER_RECV_MSG_PART = 2;
+    private final int USER_RECV_MSG_ALL = 3;
     //end subtypes
 
     private final int SERVER_AUTH_REQUEST = 1;
@@ -84,26 +85,43 @@ public class SocketController {
         return task;
     }
 
+
     public Task<Boolean> getSendMsgTask(String recipientName, String message) {
         return new Task<Boolean>() {
             @Override
-            protected Boolean call() throws Exception {
-
-
-
-                return null;
+            protected Boolean call() throws IOException {
+                if (checkIfUserIsConnected(recipientName)) {
+                    sendMessageAndAddToConversation(outStream, recipientName, message);
+                    return Boolean.TRUE;
+                } else {
+                    return Boolean.FALSE;
+                }
             }
         };
     }
 
+    private boolean checkIfUserIsConnected(String recipinetName) {
+        boolean recipientConnected = false;
+        for (Contact c :
+                contacts.get()) {
+            if (c.getName().equals(recipinetName))
+                recipientConnected = true;
+            break;
+        }
+        return recipientConnected;
+    }
 
-    private boolean sendMessage(DataOutputStream out, String recipientName, String message) throws IOException {
+
+    private boolean sendMessageAndAddToConversation(DataOutputStream out, String recipientName, String message) throws IOException {
         Image image = ImageLoader.loadRandomImageFromDir(new File(INPUT_IMG_DIR).getCanonicalFile().toString());
         MyImage myImage = new MyImage(image);
         SteganoEncryptor.encryptData(myImage.getImageData(), message);
         synchronized (socketLock) {
             sendImg(out, recipientName, myImage.getWidth(), myImage.getHeight(), myImage.getImageData());
         }
+        //add message to conversation
+        Conversation conversation = World.getInstance().getConversation(recipientName);
+        conversation.addMessage(new Message(message, Message.Author.ME));
         return false;
     }
 
@@ -115,25 +133,42 @@ public class SocketController {
         out.write((recipientName + "\0").getBytes(StandardCharsets.US_ASCII)); //send recipient's name
         out.writeInt(width); //image width
         out.writeInt(height); //image height
+        out.flush();
         //send image data
         int remaining = img.length;
         int off = 0;
         int len;
-        while(remaining > 0) {
+        while (remaining > 0) {
             out.writeByte(SERVER_PASS_MSG);
-            if(remaining > SERVER_BUFFSIZE - 2) { //2 bytes are needed for type and subtype, rest of the message actual image data
+            if (remaining > SERVER_BUFFSIZE - 6) { //2 bytes are needed for type and subtype, and 4 bytes for integer, the rest is actual message
                 out.writeByte(SERVER_PASS_MSG_PART); //subtype indicating that the message contains only a part of the image
-                len = SERVER_BUFFSIZE - 2;
-            }
-            else {
+                len = SERVER_BUFFSIZE - 6;
+            } else {
                 out.writeByte(SERVER_PASS_MSG_ALL); //last message to be sent
                 len = remaining;
             }
+            out.writeInt(len);
             out.write(img, off, len);
+            out.flush();
             off += len;
             remaining -= len;
         }
         System.out.println("Message sent");
+    }
+
+    private class ImageMessage {
+
+        public ImageMessage(String sender, byte[] imgData, int imgWidth, int imgHeight) {
+            this.imageData = imgData;
+            this.imgWidth = imgWidth;
+            this.imgHeight = imgHeight;
+            this.sender = sender;
+        }
+
+        private byte[] imageData;
+        private int imgWidth;
+        private int imgHeight;
+        private String sender;
     }
 
     private class SocketTask extends Task<Boolean> {
@@ -263,6 +298,7 @@ public class SocketController {
                                 update_contacts(inStream);
                                 break;
                             case USER_RECV_MSG:
+                                recvMesasgeAndAddToConversation(inStream);
                                 break;
                             default:
                                 throw new WrongMsgTypeException("Wrong message's type");
@@ -372,6 +408,44 @@ public class SocketController {
                         Platform.runLater(() -> contacts.get().remove(c));
                     }
                 }
+            }
+
+            private Message recvMesasgeAndAddToConversation(DataInputStream in) throws IOException {
+                ImageMessage imgMsg = recvImg(in);
+                ImageSaver.saveImagePng(ImageConverter.convertImageData(imgMsg.imageData, imgMsg.imgWidth, imgMsg.imgHeight), new File(OUTPUT_IMG_DIR).getCanonicalFile().toString());
+                String messageText = SteganoEncryptor.decryptData(imgMsg.imageData);
+                System.out.println(messageText);
+                Message message = new Message(messageText, Message.Author.NOT_ME);
+                Conversation conversation = World.getInstance().getConversation(imgMsg.sender);
+                conversation.addMessage(message);
+                return message;
+            }
+
+            private ImageMessage recvImg(DataInputStream in) throws IOException {
+                byte type;
+                byte subType = in.readByte();
+                if (subType != USER_RECV_MSG_INFO)
+                    throw new WrongMsgTypeException("Wrong message type in recvMessage");
+                int len = in.readInt();
+                in.readFully(buf.array(), 0, len);
+                String senderName = new String(buf.array(), 0, len-1, StandardCharsets.US_ASCII);
+                int imgWidth = in.readInt();
+                int imgHeight = in.readInt();
+                int imgLen = imgWidth * imgHeight * 4;
+                byte[] imgData = new byte[imgLen];
+                int off = 0;
+                do {
+                    type = in.readByte();
+                    subType = in.readByte();
+                    if (type != USER_RECV_MSG || (subType != USER_RECV_MSG_PART && subType != USER_RECV_MSG_ALL))
+                        throw new WrongMsgTypeException("Wrong message type in recvMessage");
+                    int partLen = in.readInt();
+                    in.readFully(imgData, off, partLen);
+                    off += partLen;
+                } while (subType != USER_RECV_MSG_ALL);
+                if (imgLen != off)
+                    throw new RuntimeException("image length is not equal to size of received data");
+                return new ImageMessage(senderName, imgData, imgWidth, imgHeight);
             }
         }
     }

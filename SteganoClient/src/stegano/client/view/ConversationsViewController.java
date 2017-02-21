@@ -1,16 +1,13 @@
 package stegano.client.view;
 
+import javafx.collections.MapChangeListener;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
-import javafx.scene.paint.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import stegano.client.model.*;
 import stegano.client.MainApp;
 
 import javafx.fxml.FXML;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,27 +53,43 @@ public class ConversationsViewController {
                     String userName = cell.getItem();
                     System.out.println(userName);
 
-                    Tab tab = tabs.get(userName);
-                    if(tab == null) {
-                        tab = addNewTab(userName);
-                    }
-                    tabPane.getSelectionModel().select(tab);
+                    addTabToView(userName);
                 }
             });
             return cell;
         });
+
+        World.getInstance().getConversations().addListener((MapChangeListener<? super String, ? super Conversation>) change -> {
+            String userName = change.getKey();
+            addTabToView(userName);
+        });
     }
 
+    private void addTabToView(String userName) {
+        Tab tab = tabs.get(userName);
+        //if tab doesn't exist then create new tab for the chosen user
+        if (tab == null) {
+            tab = createNewTab(userName);
+            tabs.put(userName, tab);
+        }
+        //if tab is not currently in the tabPane then add it
+        if (!tabPane.getTabs().contains(tab)) {
+            tabPane.getTabs().add(tab);
+        }
+        //select tab
+        tabPane.getSelectionModel().select(tab);
+    }
 
-    private Tab addNewTab(String userName) {
+    private Tab createNewTab(String userName) {
         Tab tab = null;
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource("view/ConversationTabView.fxml"));
             tab = (Tab) loader.load();
+            ConversationTabViewController controller = loader.getController();
+            controller.setUserName(userName);
             tab.setText(userName);
-            tabPane.getTabs().add(tab);
-            tabs.put(userName, tab);
+
         } catch (IOException e) {
             e.printStackTrace();
         }

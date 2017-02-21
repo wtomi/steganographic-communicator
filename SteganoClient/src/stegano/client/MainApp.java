@@ -1,8 +1,12 @@
 package stegano.client;
 
 import javafx.collections.FXCollections;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import stegano.client.img.ImageConverter;
+import stegano.client.img.ImageLoader;
+import stegano.client.img.ImageSaver;
 import stegano.client.model.Contact;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
@@ -10,8 +14,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import stegano.client.model.MyImage;
+import stegano.client.sck.SocketController;
+import stegano.client.stegano.SteganoEncryptor;
 import stegano.client.view.ConversationsViewController;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -29,7 +37,20 @@ public class MainApp extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws IOException {
+
+        //Image saving test
+//        for (int i = 0; i < 10; i++) {
+//            File inDir = new File("../images/inImages").getCanonicalFile();
+//            File outDir = new File("../images/outImages").getCanonicalFile();
+//            Image image = ImageLoader.loadRandomImageFromDir(inDir.toString());
+//            MyImage myImage = new MyImage(image);
+//            SteganoEncryptor.encryptData(myImage.getImageData(), "Hello world");
+//            String message = SteganoEncryptor.decryptData(myImage.getImageData());
+//            System.out.println(message);
+//            ImageSaver.saveImagePng(ImageConverter.converMyImage(myImage), outDir.toString());
+//        }
+
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("StenoClient");
 

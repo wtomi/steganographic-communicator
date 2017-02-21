@@ -18,5 +18,15 @@ public class ImageConverter {
         return writableImage;
     }
 
+    public static WritableImage convertImageData(byte[] imgData,int width,int height) {
+        if((width * height * 4) != imgData.length)
+            throw new RuntimeException("Image dimensions doesn't match image data length");
+        WritableImage writableImage = new WritableImage(width, height);
+        PixelWriter pixelWriter = writableImage.getPixelWriter();
+        pixelWriter.setPixels(0, 0, width, height, MyImage.getPixelFormat(),
+                imgData, 0, width * 4);
+        return writableImage;
+    }
+
 
 }
