@@ -15,6 +15,7 @@
 #define SOCKET_H
 
 #include <exception>
+#include <pthread.h>
 
 class Socket {
 public:
@@ -26,6 +27,7 @@ public:
     int recvInt();
     int recvChunk(char *buf, int size);
     int sendChunk(char *buf, int size);
+    pthread_mutex_t *getMutex();
 
     class TooShortMsgException : public std::exception {
     public:
@@ -37,6 +39,7 @@ public:
 
 private:
     int sck;
+    pthread_mutex_t mutex;
 };
 
 #endif /* SOCKET_H */

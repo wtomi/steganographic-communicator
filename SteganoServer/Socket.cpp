@@ -17,6 +17,7 @@
 
 Socket::Socket(int sck) {
     this->sck = sck;
+    pthread_mutex_init(&mutex, NULL);
 }
 
 Socket::Socket(const Socket& orig) {
@@ -27,6 +28,7 @@ Socket::~Socket() {
 }
 
 char Socket::recvByte() {
+    pthread_mutex_lock(this->getMutex());
     char byte;
     int len = recv(sck, &byte, sizeof (byte), MSG_WAITALL);
 
@@ -34,10 +36,12 @@ char Socket::recvByte() {
         throw SocketClosedException();
     else if (len < 0)
         throw SocketErrorException();
+    pthread_mutex_unlock(this->getMutex());
     return byte;
 }
 
 int Socket::recvInt() {
+    pthread_mutex_lock(this->getMutex());
     char bytes[sizeof (int)];
     int len = recv(sck, bytes, sizeof (int), MSG_WAITALL);
 
@@ -46,10 +50,12 @@ int Socket::recvInt() {
     else if (len < 0)
         throw SocketErrorException();
     int n = array_to_int(bytes);
+    pthread_mutex_unlock(this->getMutex());
     return n;
 }
 
 int Socket::recvChunk(char *buf, int size) {
+    pthread_mutex_lock(this->getMutex());
     if (size <= 0)
         throw TooShortMsgException();
 
@@ -61,10 +67,12 @@ int Socket::recvChunk(char *buf, int size) {
         throw SocketErrorException();
     else if (len != size)
         perror("Impossible! Too short message received");
+    pthread_mutex_unlock(this->getMutex());
     return len;
 }
 
 int Socket::sendChunk(char *buf, int size) {
+    pthread_mutex_lock(this->getMutex());
     if (size <= 0)
         throw TooShortMsgException();
 
@@ -76,5 +84,10 @@ int Socket::sendChunk(char *buf, int size) {
         throw SocketErrorException();
     else if (len != size)
         perror("Impossible! Too short message sent");
+    pthread_mutex_unlock(this->getMutex());
     return len;
+}
+
+pthread_mutex_t *Socket::getMutex() {
+    return &mutex;
 }
