@@ -1,4 +1,4 @@
-package stegano.client.util;
+package stegano.client.stegano;
 
 import com.sun.deploy.util.ArrayUtil;
 

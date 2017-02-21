@@ -18,4 +18,13 @@ public class Contact {
     public StringProperty getNameProperty() {
         return name;
     }
+
+    public String getName() {
+        return this.name.get();
+    }
+
+    public void setName(String name) {
+        this.name.set(name);
+    }
+
 }
