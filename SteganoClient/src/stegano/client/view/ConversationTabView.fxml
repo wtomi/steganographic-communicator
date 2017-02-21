@@ -9,12 +9,12 @@
 
 <Tab fx:id="tab" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stegano.client.view.ConversationTabViewController">
    <content>
-      <AnchorPane>
+      <AnchorPane stylesheets="@DarkTheme.css">
          <children>
-            <SplitPane dividerPositions="0.6377708978328174" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <SplitPane dividerPositions="0.6377708978328174" orientation="VERTICAL" styleClass="table-view" stylesheets="@DarkTheme.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <items>
                   <ListView fx:id="conversationListView" />
-                  <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER">
+                  <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" stylesheets="@DarkTheme.css">
                      <content>
                         <TextArea fx:id="msgTextArea" prefWidth="471.0" wrapText="true" />
                      </content>

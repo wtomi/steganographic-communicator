@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stegano.client.view.LoginViewController">
+<VBox alignment="CENTER" styleClass="background" stylesheets="@DarkTheme.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stegano.client.view.LoginViewController">
    <children>
       <FlowPane alignment="CENTER" prefHeight="99.0" prefWidth="609.0">
          <children>
@@ -28,7 +28,7 @@
       </FlowPane>
       <FlowPane alignment="CENTER" columnHalignment="CENTER" VBox.vgrow="ALWAYS">
          <children>
-            <GridPane alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="175.0" prefWidth="363.0">
+            <GridPane alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="204.0" prefWidth="490.0" styleClass="table-view">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="145.0" minWidth="10.0" prefWidth="68.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="223.0" minWidth="10.0" prefWidth="215.0" />

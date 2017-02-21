@@ -4,6 +4,8 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import stegano.client.model.Message;
 import stegano.client.model.World;
 import stegano.client.sck.SocketController;
@@ -59,22 +61,22 @@ public class ConversationTabViewController {
                     setGraphic(null);
                     setText(null);
                 } else {
-                    Label text = new Label();
-                    text.setWrapText(true);
-                    //text.wrappingWidthProperty().bind(conversationListView.widthProperty().subtract(15));
+                    Label label = new Label();
+                    Text text = new Text();
+                    label.maxWidthProperty().bind(conversationListView.widthProperty().subtract(100));
+                    text.wrappingWidthProperty().bind(label.maxWidthProperty());
                     text.textProperty().bind(item.getMessageProperty());
-                    setGraphic(text);
+                    label.setGraphic(text);
+                    setGraphic(label);
                     setPrefWidth(0);
-                    //setText(item.getMessage());
                     if (item.getAuthor() == Message.Author.ME) {
                         setStyle("-fx-alignment: CENTER-RIGHT;");
-                        text.setStyle("-fx-text-alignment: right;" +
-                                "-fx-background-color: lightcyan;");
+                        text.setStyle("-fx-text-alignment: right;");
+                        label.setStyle("-fx-background-color: lightgrey;");
                     } else {
                         setStyle("-fx-alignment: CENTER-LEFT;");
-                        text.setStyle("-fx-text-alignment: left;" +
-                                "-fx-background-color: lightgrey");
-
+                        text.setStyle("-fx-text-alignment: left;");
+                        label.setStyle("-fx-background-color: lightslategray;");
                     }
                 }
             }
