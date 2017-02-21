@@ -36,6 +36,7 @@ public class ConversationsViewController {
      */
     @FXML
     private void initialize() {
+
         contactTable.setItems(World.getInstance().getContacts());
         nameColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
         nameColumn.setCellFactory((TableColumn<Contact, String> tableColumn) -> {
@@ -52,7 +53,6 @@ public class ConversationsViewController {
                 if (!cell.isEmpty()) {
                     String userName = cell.getItem();
                     System.out.println(userName);
-
                     addTabToView(userName);
                 }
             });

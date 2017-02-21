@@ -13,7 +13,7 @@
          <children>
             <SplitPane dividerPositions="0.6377708978328174" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <items>
-                  <ListView fx:id="conversationListView" prefHeight="200.0" prefWidth="200.0" />
+                  <ListView fx:id="conversationListView" />
                   <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER">
                      <content>
                         <TextArea fx:id="msgTextArea" prefWidth="471.0" wrapText="true" />

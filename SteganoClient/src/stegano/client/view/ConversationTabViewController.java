@@ -1,18 +1,12 @@
 package stegano.client.view;
 
-import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import stegano.client.model.Message;
 import stegano.client.model.World;
 import stegano.client.sck.SocketController;
-
-import java.awt.event.KeyEvent;
 
 /**
  * Created by tommy on 19.02.2017.
@@ -35,8 +29,9 @@ public class ConversationTabViewController {
     @FXML
     private void initialize() {
 
+
         msgTextArea.setOnKeyPressed(event -> {
-            if(event.getCode() == KeyCode.ENTER) {
+            if (event.getCode() == KeyCode.ENTER) {
                 String msgText = msgTextArea.getText();
                 Task sendMsgTask = SocketController.getInstance().getSendMsgTask(userName, msgText);
 //                sendMsgTask.setOnSucceeded(event1 -> {
@@ -60,20 +55,32 @@ public class ConversationTabViewController {
             @Override
             protected void updateItem(Message item, boolean empty) {
                 super.updateItem(item, empty);
-                    if(item != null) {
-                        setText(item.getMessage());
-                        if (item.getAuthor() == Message.Author.ME) {
-                            setStyle("-fx-alignment: CENTER-RIGHT;" +
-                                    "-fx-background-color: lightcyan;");
-                        } else {
-                            setStyle("-fx-alignment: CENTER-LEFT;" +
-                                    "-fx-background-color: lightgrey");
-                        }
-                    }
-            }
-        });
+                if (empty || item == null) {
+                    setGraphic(null);
+                    setText(null);
+                } else {
+                    Label text = new Label();
+                    text.setWrapText(true);
+                    //text.wrappingWidthProperty().bind(conversationListView.widthProperty().subtract(15));
+                    text.textProperty().bind(item.getMessageProperty());
+                    setGraphic(text);
+                    setPrefWidth(0);
+                    //setText(item.getMessage());
+                    if (item.getAuthor() == Message.Author.ME) {
+                        setStyle("-fx-alignment: CENTER-RIGHT;");
+                        text.setStyle("-fx-text-alignment: right;" +
+                                "-fx-background-color: lightcyan;");
+                    } else {
+                        setStyle("-fx-alignment: CENTER-LEFT;");
+                        text.setStyle("-fx-text-alignment: left;" +
+                                "-fx-background-color: lightgrey");
 
-        }
+                    }
+                }
+            }
+
+        });
+    }
 
     public String getUserName() {
         return userName;
