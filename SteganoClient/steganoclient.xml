@@ -146,6 +146,9 @@
     <property name="artifact.temp.output.steganoclient:jar" value="${artifacts.temp.dir}/SteganoClient_jar"/>
     <mkdir dir="${artifact.temp.output.steganoclient:jar}"/>
     <jar destfile="${temp.jar.path.SteganoClient.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <manifest>
+        <attribute name="Main-Class" value="stegano.client.MainApp"/>
+      </manifest>
       <zipfileset file="${basedir}/META-INF/MANIFEST.MF" prefix="META-INF"/>
       <zipfileset dir="${steganoclient.output.dir}"/>
     </jar>
