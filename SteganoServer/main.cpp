@@ -14,10 +14,17 @@
 
 /*****************************************************************/
 
-int main(int argc, char* argv[]) { 
-    
+int main(int argc, char* argv[]) {
+
+    int server_port;
+    if (argc > 1)
+        server_port = atoi(argv[1]);
+    else
+        server_port = SERVER_PORT;
+
+
     void init_client_loop();
-    
+
     int nSocket, nClientSocket;
     int nBind, nListen;
     int nFoo = 1;
@@ -28,7 +35,7 @@ int main(int argc, char* argv[]) {
     memset(&stAddr, 0, sizeof (struct sockaddr));
     stAddr.sin_family = AF_INET;
     stAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    stAddr.sin_port = htons(SERVER_PORT);
+    stAddr.sin_port = htons(server_port);
 
     /* create a socket */
     nSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -58,7 +65,7 @@ int main(int argc, char* argv[]) {
             fprintf(stderr, "%s: Can't create a connection's socket.\n", argv[0]);
         } else {
             printf("[connection from %s]\n",
-                  inet_ntoa((struct in_addr)stClientAddr.sin_addr));
+                    inet_ntoa((struct in_addr) stClientAddr.sin_addr));
             pthread_t id;
             pthread_create(&id, NULL, client_loop, &nClientSocket);
         }

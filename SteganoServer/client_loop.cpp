@@ -160,7 +160,7 @@ bool authenticate(User *user, ReadBuffer *inBuffer, WriteBuffer * outBuffer) {
     if (!strcmp(password, SERVER_PASSWORD)) {
         char *name = inBuffer->getCstringPtr();
         int name_len = inBuffer->lastOperationLen();
-        if (name_len < USER_NAME_MAX_SIZE) {
+        if (name_len < USER_NAME_MAX_SIZE && name_len > 1) {
             user->SetName(new string(name));
             if (add_user(user) == true) {
                 printf("User %s authenticated sucessfully; user added\n", name);
@@ -177,10 +177,17 @@ bool authenticate(User *user, ReadBuffer *inBuffer, WriteBuffer * outBuffer) {
                 outBuffer->overrideInt(len, position);
             }
         } else {
-            printf("Name: %s is too long; authentication failure\n", name);
+            if (name_len > USER_NAME_MAX_SIZE)
+                printf("Name: %s is too long; authentication failure\n", name);
+            else if (name_len <= 0)
+                printf("Name: %s is too short; authentication failure\n", name);
             outBuffer->putByte(USER_AUTH_FAILURE);
             int position = outBuffer->shiftPosition(sizeof (int));
-            int len = outBuffer->putCstring("Name is too long");
+            int len;
+            if (name_len > USER_NAME_MAX_SIZE)
+                len = outBuffer->putCstring("Name is too long");
+            else if (name_len <= 1)
+                len = outBuffer->putCstring("Name is too short");
             outBuffer->overrideInt(len, position);
         }
     } else {
@@ -255,34 +262,39 @@ void pass_message(User *user, ReadBuffer *inBuffer, WriteBuffer *outBuffer) {
         throw NoSuchUserException();
     User *recipient = it->second;
     pthread_mutex_unlock(&mutex_users);
-    pthread_mutex_lock(recipient->GetRefMutex_socket());
-    //prepare info message for recipient
-    outBuffer->reset();
-    outBuffer->putByte(USER_PASS_MSG);
-    outBuffer->putByte(USER_PASS_MSG_INFO);
-    outBuffer->putInt(user->GetName()->length() + 1); //+1 for null \0
-    outBuffer->putCstring(user->GetName()->c_str());
-    outBuffer->putInt(imgWidth);
-    outBuffer->putInt(imgHeight);
-    recipient->GetSocket()->sendChunk(outBuffer->GetBuffer(), outBuffer->GetPosition());
-    do {
-        char type = user->GetSocket()->recvByte();
-        subtype = user->GetSocket()->recvByte();
-        if (type != SERV_PASS_MSG || (subtype != SERV_PASS_MSG_PART && subtype != SERV_PASS_MSG_ALL))
-            throw WrongMessageTypeException();
-        int msgLen = user->GetSocket()->recvInt();
-        user->GetSocket()->recvChunk(inBuffer->GetBuffer(), msgLen);
+    try {
+        pthread_mutex_lock(recipient->GetRefMutex_socket());
+        //prepare info message for recipient
         outBuffer->reset();
         outBuffer->putByte(USER_PASS_MSG);
-        if (subtype == SERV_PASS_MSG_PART)
-            outBuffer->putByte(USER_PASS_MSG_PART);
-        else
-            outBuffer->putByte(USER_PASS_MSG_ALL);
-        outBuffer->putInt(msgLen);
+        outBuffer->putByte(USER_PASS_MSG_INFO);
+        outBuffer->putInt(user->GetName()->length() + 1); //+1 for null \0
+        outBuffer->putCstring(user->GetName()->c_str());
+        outBuffer->putInt(imgWidth);
+        outBuffer->putInt(imgHeight);
         recipient->GetSocket()->sendChunk(outBuffer->GetBuffer(), outBuffer->GetPosition());
-        recipient->GetSocket()->sendChunk(inBuffer->GetBuffer(), msgLen);
-    } while (subtype != SERV_PASS_MSG_ALL);
-    pthread_mutex_unlock(recipient->GetRefMutex_socket());
+        do {
+            char type = user->GetSocket()->recvByte();
+            subtype = user->GetSocket()->recvByte();
+            if (type != SERV_PASS_MSG || (subtype != SERV_PASS_MSG_PART && subtype != SERV_PASS_MSG_ALL))
+                throw WrongMessageTypeException();
+            int msgLen = user->GetSocket()->recvInt();
+            user->GetSocket()->recvChunk(inBuffer->GetBuffer(), msgLen);
+            outBuffer->reset();
+            outBuffer->putByte(USER_PASS_MSG);
+            if (subtype == SERV_PASS_MSG_PART)
+                outBuffer->putByte(USER_PASS_MSG_PART);
+            else
+                outBuffer->putByte(USER_PASS_MSG_ALL);
+            outBuffer->putInt(msgLen);
+            recipient->GetSocket()->sendChunk(outBuffer->GetBuffer(), outBuffer->GetPosition());
+            recipient->GetSocket()->sendChunk(inBuffer->GetBuffer(), msgLen);
+        } while (subtype != SERV_PASS_MSG_ALL);
+        pthread_mutex_unlock(recipient->GetRefMutex_socket());
+    } catch (...) {
+        pthread_mutex_unlock(recipient->GetRefMutex_socket());
+        throw;
+    }
 }
 
 void free_resources(User * user) {
