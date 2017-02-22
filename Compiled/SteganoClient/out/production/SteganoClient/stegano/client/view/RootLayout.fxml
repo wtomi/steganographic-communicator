@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@DarkTheme.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stegano.client.view.RootLayoutController">
+   <top>
+      <MenuBar fx:id="manuBar" BorderPane.alignment="CENTER">
+        <menus>
+          <Menu fx:id="menu" mnemonicParsing="false" text="Menu">
+            <items>
+                  <MenuItem fx:id="menuItemInDir" mnemonicParsing="false" text="Input Dir" />
+                  <MenuItem fx:id="menuItemOutDir" mnemonicParsing="false" text="Output Dir" />
+              <MenuItem fx:id="menuItemDisconnect" mnemonicParsing="false" text="Disconnect" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+</BorderPane>
