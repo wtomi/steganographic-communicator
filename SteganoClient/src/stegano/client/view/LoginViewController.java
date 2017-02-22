@@ -49,24 +49,32 @@ public class LoginViewController {
             @Override
             public void handle(ActionEvent event) {
 
-                startButton.setDisable(true); //disable button until authentication finishes
-                String userNameText = userName.getText();
-                Task<Boolean> connectTask = SocketController.getInstance().getConnectTask(serverName.getText(), serverPassword.getText(),
-                        Integer.valueOf(serverPort.getText()), userName.getText());
-                connectTask.setOnSucceeded((WorkerStateEvent t) -> {
-                    if (connectTask.getValue() == Boolean.TRUE) {
-                        loadAndShoewConversationView();
-                        World.getInstance().setMyUserName(userNameText);
-                    }
-                    else {
-                        message.setText(connectTask.getMessage());
-                        message.setVisible(true);
-                        startButton.setDisable(false);
-                    }
-                });
-                Thread t = new Thread(connectTask);
-                t.setDaemon(true);
-                t.start();
+                try {
+                    startButton.setDisable(true); //disable button until authentication finishes
+                    String userNameText = userName.getText();
+                    Task<Boolean> connectTask = SocketController.getInstance().getConnectTask(serverName.getText(), serverPassword.getText(),
+                            Integer.valueOf(serverPort.getText()), userName.getText());
+                    connectTask.setOnSucceeded((WorkerStateEvent t) -> {
+                        if (connectTask.getValue() == Boolean.TRUE) {
+                            loadAndShoewConversationView();
+                            World.getInstance().setMyUserName(userNameText);
+                            message.setVisible(false);
+                        } else {
+                            message.setText(connectTask.getMessage());
+                            message.setVisible(true);
+                            startButton.setDisable(false);
+                        }
+                    });
+                    Thread t = new Thread(connectTask);
+                    t.setDaemon(true);
+                    t.start();
+                } catch (NumberFormatException e) {
+                    message.setText("Wrong input data");
+                    message.setVisible(true);
+                    startButton.setDisable(false);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -75,8 +83,8 @@ public class LoginViewController {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource("view/ConversationsView.fxml"));
-            AnchorPane personOverview = (AnchorPane) loader.load();
-            MainApp.getRootLayout().setCenter(personOverview);
+            AnchorPane conversationView = (AnchorPane) loader.load();
+            MainApp.getRootLayout().setCenter(conversationView);
         } catch (IOException e) {
             e.printStackTrace();
         }

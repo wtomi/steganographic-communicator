@@ -26,6 +26,14 @@ public class World {
     private World() {
     }
 
+    public void reset() {
+        Platform.runLater(() -> {
+            contacts.clear();
+            conversations.clear();
+            myUserName = null;
+        });
+    }
+
     public Conversation getConversation(String userName) {
         Conversation conversation = conversations.get(userName);
         if(conversation == null) {

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
@@ -10,25 +12,28 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" styleClass="background" stylesheets="@DarkTheme.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stegano.client.view.LoginViewController">
+<VBox alignment="CENTER" styleClass="background" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stegano.client.view.LoginViewController">
    <children>
       <FlowPane alignment="CENTER" prefHeight="99.0" prefWidth="609.0">
          <children>
             <VBox alignment="CENTER">
                <children>
-                  <Label accessibleRole="IMAGE_VIEW" alignment="TOP_CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="211.0" text="SteganoCommunicator" textAlignment="CENTER">
+                  <Label accessibleRole="IMAGE_VIEW" alignment="TOP_CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="39.0" prefWidth="308.0" styleClass="label-header" text="SteganoCommunicator" textAlignment="CENTER">
                      <font>
                         <Font size="20.0" />
                      </font>
                   </Label>
-                  <Label fx:id="message" alignment="CENTER" text="message" textAlignment="CENTER" textFill="#ee3939" visible="false" />
+                  <Label fx:id="message" alignment="CENTER" focusTraversable="false" text="message" textAlignment="CENTER" textFill="#ee3939" visible="false">
+                     <VBox.margin>
+                        <Insets top="20.0" />
+                     </VBox.margin></Label>
                </children>
             </VBox>
          </children>
       </FlowPane>
       <FlowPane alignment="CENTER" columnHalignment="CENTER" VBox.vgrow="ALWAYS">
          <children>
-            <GridPane alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="204.0" prefWidth="490.0" styleClass="table-view">
+            <GridPane alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="203.0" prefWidth="388.0" styleClass="table-view">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="145.0" minWidth="10.0" prefWidth="68.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="223.0" minWidth="10.0" prefWidth="215.0" />
@@ -41,18 +46,22 @@
                   <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <TextField fx:id="serverName" text="127.0.0.1" GridPane.columnIndex="1" />
-                  <TextField fx:id="serverPort" text="1234" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <TextField fx:id="userName" text="Name" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <Label text="server IP" />
-                  <Label text="password" GridPane.rowIndex="2" />
-                  <Label text="name" GridPane.rowIndex="3" />
-                  <Button fx:id="startButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="221.0" text="Start" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <TextField fx:id="serverPassword" prefWidth="353.0" text="password" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <Label text="port" GridPane.rowIndex="1" />
+                  <TextField fx:id="serverName" promptText="127.0.0.1" GridPane.columnIndex="1" />
+                  <TextField fx:id="serverPort" promptText="1234" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <TextField fx:id="serverPassword" prefWidth="353.0" promptText="password" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <TextField fx:id="userName" promptText="name" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" prefHeight="25.0" prefWidth="221.0" text="Start" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <Label focusTraversable="false" text="server IP" />
+                  <Label focusTraversable="false" text="port" GridPane.rowIndex="1" />
+                  <Label focusTraversable="false" text="password" GridPane.rowIndex="2" />
+                  <Label focusTraversable="false" text="name" GridPane.rowIndex="3" />
                </children>
             </GridPane>
          </children>
       </FlowPane>
    </children>
+   <stylesheets>
+      <URL value="@DarkTheme.css" />
+      <URL value="@DarkTheme.css" />
+   </stylesheets>
 </VBox>

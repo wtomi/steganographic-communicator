@@ -7,16 +7,14 @@ import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
+import stegano.client.MainApp;
 import stegano.client.img.ImageConverter;
 import stegano.client.img.ImageLoader;
 import stegano.client.img.ImageSaver;
 import stegano.client.model.*;
 import stegano.client.stegano.SteganoEncryptor;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -72,6 +70,15 @@ public class SocketController {
     AtomicBoolean waitingForContacts = new AtomicBoolean(false);
 
     private ReadOnlyObjectWrapper<ObservableList<Contact>> contacts = new ReadOnlyObjectWrapper<>(World.getInstance().getContacts());
+
+    public void reset() {
+        running.set(false);
+        waitingForContacts.set(false);
+        socket = null;
+        inStream = null;
+        outStream = null;
+        World.getInstance().reset();
+    }
 
     public static SocketController getInstance() {
         return ourInstance;
@@ -210,15 +217,17 @@ public class SocketController {
                         Thread t = new Thread(mainTask);
                         t.setDaemon(true);
                         t.start();
-                        System.out.println("thread main started");
+                        //System.out.println("thread main started");
                         return Boolean.TRUE;
                     }
                 }
 
             } catch (TooLongMessageException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
+                updateMessage("Too long message to send");
             } catch (IOException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
+                updateMessage("Unable to connect");
             } catch (WrongMsgTypeException e) {
                 e.printStackTrace();
             } catch (Exception e) {
@@ -238,7 +247,7 @@ public class SocketController {
                         outStream = null;
                     }
                 }
-                System.out.println("The end of authentication");
+                //System.out.println("The end of authentication");
             }
             return Boolean.FALSE;
         }
@@ -284,15 +293,16 @@ public class SocketController {
             @Override
             protected Void call() throws Exception {
                 System.out.println("Start of main loop");
-                ScheduledService<Void> ssvc = null;
+                final ScheduledService<Void> ssvc = new ContactsRequestService();
                 try {
                     //run service for sending request for contacts' list to server
-                    ssvc = new ContactsRequestService();
                     ssvc.setPeriod(Duration.seconds(3));
                     //ssvc.setRestartOnFailure(true);
                     ssvc.start();
                     boolean out = false;
                     while (!out) {
+                        if (isCancelled())
+                            throw new InterruptedException();
                         byte msg_type = inStream.readByte();
                         switch (msg_type) {
                             case USER_RECV_CONTACTS:
@@ -305,13 +315,14 @@ public class SocketController {
                                 throw new WrongMsgTypeException("Wrong message's type");
                         }
                     }
-
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
                 } catch (WrongMsgTypeException e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
+                } catch (InterruptedException e) {
+
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
                 } finally {
                     if (socket != null) {
                         socket.close();
@@ -326,8 +337,10 @@ public class SocketController {
                         outStream = null;
                     }
                     running.set(false);
-                    ssvc.cancel();
+                    reset();
+                    Platform.runLater(() -> ssvc.cancel());
                     System.out.println("The end of main loop");
+                    Platform.runLater(() -> MainApp.showLoginView());
                 }
                 return null;
             }
