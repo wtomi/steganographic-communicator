@@ -32,7 +32,7 @@ public class MainApp extends Application {
     public void start(Stage primaryStage) throws IOException {
 
         this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("StenoClient");
+        this.primaryStage.setTitle("SteganoClient");
 
         try {
             //InputOutputDirectory.setInputDir(new File(MainApp.class.getResource("resources/inImages").getPath()));
