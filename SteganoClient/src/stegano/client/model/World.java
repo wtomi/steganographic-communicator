@@ -5,10 +5,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Observable;
-
 /**
  * Created by tommy on 19.02.2017.
  */

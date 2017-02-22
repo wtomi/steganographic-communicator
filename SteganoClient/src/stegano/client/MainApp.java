@@ -8,11 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import stegano.client.img.ImageLoader;
-import stegano.client.img.InputOutputDirectory;
 import stegano.client.sck.SocketController;
-
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 

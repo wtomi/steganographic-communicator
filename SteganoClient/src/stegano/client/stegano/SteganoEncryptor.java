@@ -1,8 +1,5 @@
 package stegano.client.stegano;
 
-import com.sun.deploy.util.ArrayUtil;
-
-import javax.rmi.CORBA.Util;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;

@@ -4,7 +4,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritablePixelFormat;
-import stegano.client.stegano.SteganoEncryptor;
 
 import java.nio.ByteBuffer;
 

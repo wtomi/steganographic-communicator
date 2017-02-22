@@ -3,8 +3,6 @@ package stegano.client.img;
 import javafx.scene.image.*;
 import stegano.client.model.MyImage;
 
-import java.nio.ByteBuffer;
-
 /**
  * Created by tommy on 20.02.2017.
  */
