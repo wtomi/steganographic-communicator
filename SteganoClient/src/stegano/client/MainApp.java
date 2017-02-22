@@ -8,6 +8,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import stegano.client.sck.SocketController;
+
 import java.io.IOException;
 
 /**
@@ -34,6 +36,11 @@ public class MainApp extends Application {
         initRootLayout();
         showLoginView();
         //showConversationsView();
+    }
+
+    @Override
+    public void stop() {
+        SocketController.getInstance().interruptMainLoopThread();
     }
 
     /**

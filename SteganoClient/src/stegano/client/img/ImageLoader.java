@@ -17,7 +17,7 @@ public class ImageLoader {
         if(imgNames != null) {
             for (String s :
                     imgNames) {
-                System.out.println(s);
+                //System.out.println(s);
             }
             Random rand = new Random();
             String randomImgName = imgNames[rand.nextInt(imgNames.length)];

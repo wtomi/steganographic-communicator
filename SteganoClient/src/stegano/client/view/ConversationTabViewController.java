@@ -4,7 +4,6 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import stegano.client.model.Message;
 import stegano.client.model.World;
@@ -30,7 +29,6 @@ public class ConversationTabViewController {
 
     @FXML
     private void initialize() {
-
 
         msgTextArea.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {

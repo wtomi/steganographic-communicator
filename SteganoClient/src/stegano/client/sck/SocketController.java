@@ -66,18 +66,31 @@ public class SocketController {
     private final int SERVER_PASS_MSG_ALL = 3;
 
 
-    AtomicBoolean running = new AtomicBoolean(false);
-    AtomicBoolean waitingForContacts = new AtomicBoolean(false);
+    private AtomicBoolean running = new AtomicBoolean(false);
+    private AtomicBoolean waitingForContacts = new AtomicBoolean(false);
 
     private ReadOnlyObjectWrapper<ObservableList<Contact>> contacts = new ReadOnlyObjectWrapper<>(World.getInstance().getContacts());
 
-    public void reset() {
+    private void reset() {
         running.set(false);
         waitingForContacts.set(false);
         socket = null;
         inStream = null;
         outStream = null;
         World.getInstance().reset();
+    }
+
+    public void interruptMainLoopThread() {
+        synchronized (socketLock) {
+            try {
+                if (socket != null) {
+                    socket.close();
+                    reset();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static SocketController getInstance() {
@@ -161,7 +174,7 @@ public class SocketController {
             off += len;
             remaining -= len;
         }
-        System.out.println("Message sent");
+        //System.out.println("Message sent");
     }
 
     private class ImageMessage {
@@ -265,7 +278,7 @@ public class SocketController {
 
         private String recv_authentication_msg(DataInputStream in) throws IOException {
             int len = in.readInt();
-            System.out.println("Read int: " + Integer.toString(len));
+            //System.out.println("Read int: " + Integer.toString(len));
             in.readFully(buf.array(), 0, len);
             String string = new String(buf.array(), 0, len);
             return string;
@@ -292,7 +305,7 @@ public class SocketController {
 
             @Override
             protected Void call() throws Exception {
-                System.out.println("Start of main loop");
+                //System.out.println("Start of main loop");
                 final ScheduledService<Void> ssvc = new ContactsRequestService();
                 try {
                     //run service for sending request for contacts' list to server
@@ -301,8 +314,6 @@ public class SocketController {
                     ssvc.start();
                     boolean out = false;
                     while (!out) {
-                        if (isCancelled())
-                            throw new InterruptedException();
                         byte msg_type = inStream.readByte();
                         switch (msg_type) {
                             case USER_RECV_CONTACTS:
@@ -319,8 +330,6 @@ public class SocketController {
                     //e.printStackTrace();
                 } catch (WrongMsgTypeException e) {
                     //e.printStackTrace();
-                } catch (InterruptedException e) {
-
                 } catch (Exception e) {
                     //e.printStackTrace();
                 } finally {
@@ -339,7 +348,7 @@ public class SocketController {
                     running.set(false);
                     reset();
                     Platform.runLater(() -> ssvc.cancel());
-                    System.out.println("The end of main loop");
+                    //System.out.println("The end of main loop");
                     Platform.runLater(() -> MainApp.showLoginView());
                 }
                 return null;
@@ -396,7 +405,7 @@ public class SocketController {
                         }
                     }
                     if (!contain) {
-                        System.out.println("Added: " + s);
+                        //System.out.println("Added: " + s);
                         Platform.runLater(() -> contacts.get().add(new Contact(s)));
                     }
                 }
@@ -428,7 +437,7 @@ public class SocketController {
                 ImageMessage imgMsg = recvImg(in);
                 ImageSaver.saveImagePng(ImageConverter.convertImageData(imgMsg.imageData, imgMsg.imgWidth, imgMsg.imgHeight), new File(OUTPUT_IMG_DIR).getCanonicalFile().toString());
                 String messageText = SteganoEncryptor.decryptData(imgMsg.imageData);
-                System.out.println(messageText);
+                //System.out.println(messageText);
                 Message message = new Message(messageText, Message.Author.NOT_ME);
                 Conversation conversation = World.getInstance().getConversation(imgMsg.sender);
                 conversation.addMessage(message);

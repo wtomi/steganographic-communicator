@@ -43,7 +43,7 @@ public class LoginViewController {
     @FXML
     private void initialize() {
 
-        System.out.println("I'm beging initalized");
+        // System.out.println("I'm beging initalized");
 
         startButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override

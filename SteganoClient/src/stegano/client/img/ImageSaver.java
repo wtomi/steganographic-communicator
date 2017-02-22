@@ -21,7 +21,7 @@ public class ImageSaver {
     }
 
     private static void saveImage(Image image, String path, String format) {
-        System.out.println(path + "\\" + LocalTime.now().toString() + ".png");
+        //System.out.println(path + "\\" + LocalTime.now().toString() + ".png");
         DateTimeFormatter timeForamtter = DateTimeFormatter.ofPattern("yyyy.MM.dd.HH.mm.ss.SSS");
         String time = LocalDateTime.now().format(timeForamtter);
         File outputFile = new File(path + "\\" + time + "." + format);
