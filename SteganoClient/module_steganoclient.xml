@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_steganoclient" default="compile.module.steganoclient">
+  <dirname property="module.steganoclient.basedir" file="${ant.file.module_steganoclient}"/>
+  
+  <property name="module.jdk.home.steganoclient" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.steganoclient" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.steganoclient" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.steganoclient" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="steganoclient.output.dir" value="${module.steganoclient.basedir}/out/production/SteganoClient"/>
+  <property name="steganoclient.testoutput.dir" value="${module.steganoclient.basedir}/out/test/SteganoClient"/>
+  
+  <path id="steganoclient.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="steganoclient.module.production.classpath">
+    <path refid="${module.jdk.classpath.steganoclient}"/>
+  </path>
+  
+  <path id="steganoclient.runtime.production.module.classpath">
+    <pathelement location="${steganoclient.output.dir}"/>
+  </path>
+  
+  <path id="steganoclient.module.classpath">
+    <path refid="${module.jdk.classpath.steganoclient}"/>
+    <pathelement location="${steganoclient.output.dir}"/>
+  </path>
+  
+  <path id="steganoclient.runtime.module.classpath">
+    <pathelement location="${steganoclient.testoutput.dir}"/>
+    <pathelement location="${steganoclient.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.steganoclient">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.steganoclient">
+    <patternset refid="excluded.from.module.steganoclient"/>
+  </patternset>
+  
+  <path id="steganoclient.module.sourcepath">
+    <dirset dir="${module.steganoclient.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.steganoclient" depends="compile.module.steganoclient.production,compile.module.steganoclient.tests" description="Compile module SteganoClient"/>
+  
+  <target name="compile.module.steganoclient.production" depends="register.custom.compilers" description="Compile module SteganoClient; production classes">
+    <mkdir dir="${steganoclient.output.dir}"/>
+    <javac2 destdir="${steganoclient.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.steganoclient}/javac">
+      <compilerarg line="${compiler.args.steganoclient}"/>
+      <bootclasspath refid="steganoclient.module.bootclasspath"/>
+      <classpath refid="steganoclient.module.production.classpath"/>
+      <src refid="steganoclient.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.steganoclient"/>
+    </javac2>
+    
+    <copy todir="${steganoclient.output.dir}">
+      <fileset dir="${module.steganoclient.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.steganoclient.tests" depends="register.custom.compilers,compile.module.steganoclient.production" description="compile module SteganoClient; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.steganoclient" description="cleanup module">
+    <delete dir="${steganoclient.output.dir}"/>
+    <delete dir="${steganoclient.testoutput.dir}"/>
+  </target>
+</project>
