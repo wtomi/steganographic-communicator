@@ -16,18 +16,18 @@ import java.time.format.DateTimeFormatter;
  */
 public class ImageSaver {
 
-    public static void saveImagePng(Image image, String path) {
-        saveImage(image, path, "png");
+    public static void saveImagePng(Image image, File file) {
+        saveImage(image, file, "png");
     }
 
-    private static void saveImage(Image image, String path, String format) {
+    private static void saveImage(Image image, File file, String format) {
         //System.out.println(path + "\\" + LocalTime.now().toString() + ".png");
         DateTimeFormatter timeForamtter = DateTimeFormatter.ofPattern("yyyy.MM.dd.HH.mm.ss.SSS");
         String time = LocalDateTime.now().format(timeForamtter);
-        File outputFile = new File(path + "\\" + time + "." + format);
+        File out = new File(file, time + "." + format);
         BufferedImage bImage = SwingFXUtils.fromFXImage(image, null);
         try {
-            ImageIO.write(bImage, format, outputFile);
+            ImageIO.write(bImage, format, out);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

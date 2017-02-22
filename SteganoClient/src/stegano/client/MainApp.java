@@ -8,16 +8,20 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import stegano.client.img.ImageLoader;
+import stegano.client.img.InputOutputDirectory;
 import stegano.client.sck.SocketController;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 /**
  * Created by tommy on 27.01.2017.
  */
 public class MainApp extends Application {
 
-    private Stage primaryStage;
+    private static Stage primaryStage;
     private static BorderPane rootLayout;
 
     public static BorderPane getRootLayout() {
@@ -30,8 +34,13 @@ public class MainApp extends Application {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("StenoClient");
 
-        Image icon = new Image(MainApp.class.getResource("resources/images/safe.png").toString());
-        this.primaryStage.getIcons().add(icon);
+        try {
+            //InputOutputDirectory.setInputDir(new File(MainApp.class.getResource("resources/inImages").getPath()));
+            Image icon = new Image(MainApp.class.getResource("resources/images/safe.png").toURI().toString());
+            this.primaryStage.getIcons().add(icon);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
 
         initRootLayout();
         showLoginView();
@@ -92,7 +101,7 @@ public class MainApp extends Application {
      *
      * @return
      */
-    public Stage getPrimaryStage() {
+    public static Stage getPrimaryStage() {
         return primaryStage;
     }
 

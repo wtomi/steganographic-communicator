@@ -52,7 +52,7 @@ public class ConversationsViewController {
             cell.setOnMouseClicked(e -> {
                 if (!cell.isEmpty()) {
                     String userName = cell.getItem();
-                    System.out.println(userName);
+                    //System.out.println(userName);
                     addTabToView(userName);
                 }
             });

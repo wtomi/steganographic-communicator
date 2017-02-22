@@ -5,17 +5,21 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ObservableList;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import stegano.client.MainApp;
 import stegano.client.img.ImageConverter;
 import stegano.client.img.ImageLoader;
 import stegano.client.img.ImageSaver;
+import stegano.client.img.InputOutputDirectory;
 import stegano.client.model.*;
 import stegano.client.stegano.SteganoEncryptor;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -134,7 +138,27 @@ public class SocketController {
 
 
     private boolean sendMessageAndAddToConversation(DataOutputStream out, String recipientName, String message) throws IOException {
-        Image image = ImageLoader.loadRandomImageFromDir(new File(INPUT_IMG_DIR).getCanonicalFile().toString());
+        File inDir = InputOutputDirectory.getInputDir();
+        if(inDir == null) {
+            Platform.runLater(() -> {
+                final Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("SteganoClient");
+                alert.setHeaderText("No input directory specified");
+                alert.setContentText("Please choose input directory with images\n" +
+                        "Menu -> Input Dir");
+                Image icon = null;
+                try {
+                    icon = new Image(MainApp.class.getResource("resources/images/safe.png").toURI().toString());
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
+                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                stage.getIcons().add(icon);
+                alert.showAndWait();
+            });
+            return false;
+        }
+        Image image = ImageLoader.loadRandomImageFromDir(inDir);
         MyImage myImage = new MyImage(image);
         SteganoEncryptor.encryptData(myImage.getImageData(), message);
         synchronized (socketLock) {
@@ -143,7 +167,7 @@ public class SocketController {
         //add message to conversation
         Conversation conversation = World.getInstance().getConversation(recipientName);
         conversation.addMessage(new Message(message, Message.Author.ME));
-        return false;
+        return true;
     }
 
     private void sendImg(DataOutputStream out, String recipientName, int width, int height, byte img[]) throws IOException {
@@ -427,7 +451,7 @@ public class SocketController {
                             break;
                     }
                     if (rm) {
-                        System.out.println("Deleted: " + c.getName());
+                        //System.out.println("Deleted: " + c.getName());
                         Platform.runLater(() -> contacts.get().remove(c));
                     }
                 }
@@ -435,7 +459,10 @@ public class SocketController {
 
             private Message recvMesasgeAndAddToConversation(DataInputStream in) throws IOException {
                 ImageMessage imgMsg = recvImg(in);
-                ImageSaver.saveImagePng(ImageConverter.convertImageData(imgMsg.imageData, imgMsg.imgWidth, imgMsg.imgHeight), new File(OUTPUT_IMG_DIR).getCanonicalFile().toString());
+                File outDir = InputOutputDirectory.getOutputDir();
+                if(outDir != null) {
+                    ImageSaver.saveImagePng(ImageConverter.convertImageData(imgMsg.imageData, imgMsg.imgWidth, imgMsg.imgHeight), outDir);
+                }
                 String messageText = SteganoEncryptor.decryptData(imgMsg.imageData);
                 //System.out.println(messageText);
                 Message message = new Message(messageText, Message.Author.NOT_ME);

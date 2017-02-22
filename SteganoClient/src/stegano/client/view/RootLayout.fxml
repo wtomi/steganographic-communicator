@@ -11,6 +11,8 @@
         <menus>
           <Menu fx:id="menu" mnemonicParsing="false" text="Menu">
             <items>
+                  <MenuItem fx:id="menuItemInDir" mnemonicParsing="false" text="Input Dir" />
+                  <MenuItem fx:id="menuItemOutDir" mnemonicParsing="false" text="Output Dir" />
               <MenuItem fx:id="menuItemDisconnect" mnemonicParsing="false" text="Disconnect" />
             </items>
           </Menu>
