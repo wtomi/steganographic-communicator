@@ -11,6 +11,7 @@
       <itemPath>WriteBuffer.h</itemPath>
       <itemPath>client_loop.h</itemPath>
       <itemPath>data_conversion.h</itemPath>
+      <itemPath>server_configuration.h</itemPath>
       <itemPath>socket_headers.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
@@ -87,6 +88,8 @@
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="server_configuration.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="socket_headers.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
@@ -139,6 +142,8 @@
       <item path="data_conversion.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="server_configuration.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="socket_headers.h" ex="false" tool="3" flavor2="0">
       </item>

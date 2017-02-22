@@ -6,6 +6,7 @@
 #include "socket_headers.h"
 #include "Socket.h"
 #include "client_loop.h"
+#include "server_configuration.h"
 
 #include <map>
 #include <string>
@@ -13,7 +14,7 @@
 #include <pthread.h>
 #include <exception>
 
-static const char *SERVER_PASSWORD = "password";
+//static const char *SERVER_PASSWORD = "password";
 static const int USER_NAME_MAX_SIZE = 30;
 static const int BUFFSIZE = 8192;
 
@@ -157,7 +158,7 @@ bool authenticate(User *user, ReadBuffer *inBuffer, WriteBuffer * outBuffer) {
 
     put_msg_into_buf(user->GetSocket(), inBuffer);
     char *password = inBuffer->getCstringPtr();
-    if (!strcmp(password, SERVER_PASSWORD)) {
+    if (!strcmp(password, server_password)) {
         char *name = inBuffer->getCstringPtr();
         int name_len = inBuffer->lastOperationLen();
         if (name_len < USER_NAME_MAX_SIZE && name_len > 1) {

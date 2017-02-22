@@ -8,19 +8,21 @@
 #include <cstdlib>
 #include "socket_headers.h"
 #include "client_loop.h"
-
-#define SERVER_PORT 1234
-#define QUEUE_SIZE 5
+#include "server_configuration.h"
 
 /*****************************************************************/
 
-int main(int argc, char* argv[]) {
+//declared in serrver_vonfiguration.h
+const char *DAFAULT_SERVER_PASSWORD = "password";
+int server_port = SERVER_PORT;
+const char *server_password = DAFAULT_SERVER_PASSWORD;
 
-    int server_port;
+int main(int argc, char* argv[]) {
     if (argc > 1)
         server_port = atoi(argv[1]);
-    else
-        server_port = SERVER_PORT;
+    if (argc > 2)
+        server_password = argv[2];
+
 
 
     void init_client_loop();
